@@ -2,34 +2,40 @@ services:
   db:
     image: postgres:16-alpine
     restart: unless-stopped
+
     environment:
       POSTGRES_USER: ctracking
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       POSTGRES_DB: ctracking
+
     volumes:
       - pgdata:/var/lib/postgresql/data
+
     healthcheck:
-      test:
-        - CMD-SHELL
-        - pg_isready -U ctracking -d ctracking
+      test: ["CMD-SHELL", "pg_isready -U ctracking -d ctracking"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 20
+      start_period: 10s
 
   backend:
     build: .
     restart: unless-stopped
+
     depends_on:
       db:
         condition: service_healthy
+
     environment:
       PORT: "8080"
       DATABASE_URL: "postgres://ctracking:${POSTGRES_PASSWORD}@db:5432/ctracking?sslmode=disable"
-      JWT_SECRET: ${JWT_SECRET}
+      JWT_SECRET: "${JWT_SECRET}"
       STORAGE_DIR: "/app/storage"
       WEB_ADMIN_ORIGIN: "https://monitor.linkosolution.com"
+
     expose:
       - "8080"
+
     volumes:
       - screenshots:/app/storage
 
