@@ -12,6 +12,7 @@ import {
 } from "./demo";
 import type {
   AccountType,
+  Administrator,
   ActivityResponse,
   AuthResponse,
   BrowserVisit,
@@ -126,6 +127,27 @@ export function createEmployee(input: {
 export function listBusinessEmployees(businessId: string) {
   if (isDemo()) return Promise.resolve({ employees: demoEmployees() });
   return request<{ employees: Employee[] }>(`/v1/businesses/${businessId}/employees`);
+}
+
+// ---------- administrators ----------
+export function listAdministrators(businessId: string) {
+  return request<{ administrators: Administrator[] }>(`/v1/businesses/${businessId}/administrators`);
+}
+
+export function createAdministrator(businessId: string, input: {
+  email?: string;
+  username?: string;
+  password: string;
+  display_name: string;
+}) {
+  return request<{ administrator: Administrator }>(`/v1/businesses/${businessId}/administrators`, {
+    method: "POST",
+    body: input,
+  });
+}
+
+export function removeAdministrator(businessId: string, administratorId: string) {
+  return request<void>(`/v1/businesses/${businessId}/administrators/${administratorId}`, { method: "DELETE" });
 }
 
 // ---------- reports ----------

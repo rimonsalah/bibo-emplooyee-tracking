@@ -78,6 +78,14 @@ const SettingsIcon = () => (
   </RailIcon>
 );
 
+const AdminIcon = () => (
+  <RailIcon>
+    <circle cx="9" cy="7" r="4" />
+    <path d="M3 21v-2a6 6 0 0 1 12 0v2" />
+    <path d="M17 11h4M19 9v4" />
+  </RailIcon>
+);
+
 const ChevronsUpDownIcon = () => (
   <RailIcon>
     <path d="m7 15 5 5 5-5" />
@@ -272,6 +280,7 @@ export function AppShell() {
   const NAV = [
     { to: "/", label: t("nav.dashboard"), end: true, icon: <DashboardIcon /> },
     { to: "/employees", label: terms.many, end: false, icon: <MembersIcon /> },
+    { to: "/administrators", label: "Administrators", end: false, icon: <AdminIcon /> },
     { to: "/settings", label: t("nav.settings"), end: false, icon: <SettingsIcon /> },
   ];
 

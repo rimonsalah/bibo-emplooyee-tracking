@@ -140,6 +140,89 @@ func (h *OwnerHandler) ListEmployees(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"employees": list})
 }
 
+// ListAdministrators returns the primary owner and invited administrators.
+func (h *OwnerHandler) ListAdministrators(c *gin.Context) {
+	if !h.requireOwner(c) {
+		return
+	}
+	list, err := h.store.ListAdministrators(c.Request.Context(), c.Param("id"))
+	if err != nil {
+		serverError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"administrators": list})
+}
+
+type createAdministratorReq struct {
+	Email       string `json:"email"`
+	Username    string `json:"username"`
+	Password    string `json:"password"`
+	DisplayName string `json:"display_name"`
+}
+
+// CreateAdministrator creates a separate administrator login. Only the primary
+// business owner may invite additional administrators.
+func (h *OwnerHandler) CreateAdministrator(c *gin.Context) {
+	userID, _ := auth.UserID(c)
+	var req createAdministratorReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		badRequest(c, "invalid body")
+		return
+	}
+	req.Email = strings.TrimSpace(req.Email)
+	req.Username = strings.ToLower(strings.TrimSpace(req.Username))
+	req.DisplayName = strings.TrimSpace(req.DisplayName)
+	if req.DisplayName == "" {
+		badRequest(c, "display_name is required")
+		return
+	}
+	if req.Email == "" && req.Username == "" {
+		badRequest(c, "an email or username is required")
+		return
+	}
+	if req.Username != "" && !usernameRe.MatchString(req.Username) {
+		badRequest(c, "username must be 3-32 chars: lowercase letters, digits, underscores")
+		return
+	}
+	if len(req.Password) < 8 {
+		badRequest(c, "password must be at least 8 characters")
+		return
+	}
+	hash, err := auth.HashPassword(req.Password)
+	if err != nil {
+		serverError(c, err)
+		return
+	}
+	admin, err := h.store.CreateAdministrator(c.Request.Context(), userID, c.Param("id"), req.Email, req.Username, hash, req.DisplayName)
+	switch {
+	case errors.Is(err, store.ErrConflict):
+		c.JSON(http.StatusConflict, gin.H{"error": "that email or username is already taken"})
+	case errors.Is(err, store.ErrForbidden):
+		c.JSON(http.StatusForbidden, gin.H{"error": "only the primary owner can invite administrators"})
+	case err != nil:
+		serverError(c, err)
+	default:
+		c.JSON(http.StatusCreated, gin.H{"administrator": admin})
+	}
+}
+
+// RemoveAdministrator revokes an invited administrator. The primary owner
+// cannot be removed.
+func (h *OwnerHandler) RemoveAdministrator(c *gin.Context) {
+	userID, _ := auth.UserID(c)
+	err := h.store.RemoveAdministrator(c.Request.Context(), userID, c.Param("id"), c.Param("adminId"))
+	switch {
+	case errors.Is(err, store.ErrNotFound):
+		c.JSON(http.StatusNotFound, gin.H{"error": "administrator not found"})
+	case errors.Is(err, store.ErrForbidden):
+		c.JSON(http.StatusForbidden, gin.H{"error": "only the primary owner can remove invited administrators"})
+	case err != nil:
+		serverError(c, err)
+	default:
+		c.Status(http.StatusNoContent)
+	}
+}
+
 // UpdateSettings updates a business's capture policy. Only the keys present in the
 // body are changed; screenshot_retention_days accepts null ("keep forever").
 func (h *OwnerHandler) UpdateSettings(c *gin.Context) {
@@ -260,7 +343,12 @@ func (h *OwnerHandler) requireOwner(c *gin.Context) bool {
 		serverError(c, err)
 		return false
 	}
-	if biz.OwnerUserID != userID {
+	allowed, err := h.store.IsBusinessOwner(c.Request.Context(), userID, biz.ID)
+	if err != nil {
+		serverError(c, err)
+		return false
+	}
+	if !allowed {
 		c.JSON(http.StatusForbidden, gin.H{"error": "not your business"})
 		return false
 	}

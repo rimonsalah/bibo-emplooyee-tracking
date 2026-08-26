@@ -10,6 +10,7 @@ import { Employees } from "./pages/Employees";
 import { SignIn } from "./auth/SignIn";
 import { SignupWizard } from "./auth/SignupWizard";
 import { Settings } from "./pages/Settings";
+import { Administrators } from "./pages/Administrators";
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
                 <Route index element={<Dashboard />} />
                 <Route path="employees" element={<Employees />} />
                 <Route path="employees/:id" element={<EmployeeDetail />} />
+                <Route path="administrators" element={<Administrators />} />
                 <Route path="settings" element={<Settings />} />
               </Route>
             </Route>

@@ -74,6 +74,14 @@ export interface Employee {
   display_name: string;
 }
 
+export interface Administrator {
+  id: string;
+  email: string;
+  username?: string;
+  display_name: string;
+  primary: boolean;
+}
+
 export interface CreateEmployeeResponse {
   employee: Employee;
   business: Business;

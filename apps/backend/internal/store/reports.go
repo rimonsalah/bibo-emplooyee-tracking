@@ -7,11 +7,11 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// IsBusinessOwner reports whether ownerID owns businessID.
+// IsBusinessOwner reports whether ownerID is the primary owner or an invited admin.
 func (s *Store) IsBusinessOwner(ctx context.Context, ownerID, businessID string) (bool, error) {
 	var ok bool
 	err := s.pool.QueryRow(ctx,
-		`SELECT EXISTS(SELECT 1 FROM businesses WHERE id = $1 AND owner_user_id = $2)`,
+		`SELECT EXISTS(SELECT 1 FROM memberships WHERE business_id = $1 AND user_id = $2 AND role = 'owner')`,
 		businessID, ownerID).Scan(&ok)
 	return ok, err
 }
@@ -24,7 +24,8 @@ func (s *Store) OwnsEmployee(ctx context.Context, ownerID, employeeID string) (b
 		`SELECT EXISTS(
 		    SELECT 1 FROM memberships m
 		      JOIN businesses b ON b.id = m.business_id
-		     WHERE m.user_id = $1 AND m.role IN ('owner','employee') AND b.owner_user_id = $2)`,
+		     WHERE m.user_id = $1 AND m.role IN ('owner','employee')
+		       AND EXISTS (SELECT 1 FROM memberships a WHERE a.business_id = b.id AND a.user_id = $2 AND a.role = 'owner'))`,
 		employeeID, ownerID).Scan(&ok)
 	return ok, err
 }
@@ -102,7 +103,7 @@ func (s *Store) Roster(ctx context.Context, businessID string, dayStart, dayEnd 
 
 // All per-employee reads are scoped to businesses the caller owns via this filter,
 // so an owner can never read another business's data.
-const ownedFilter = `business_id IN (SELECT id FROM businesses WHERE owner_user_id = $2)`
+const ownedFilter = `business_id IN (SELECT business_id FROM memberships WHERE user_id = $2 AND role = 'owner')`
 
 // ActivitySample is one app-usage interval in a report.
 type ActivitySample struct {
@@ -262,7 +263,8 @@ func (s *Store) ScreenshotPathForOwner(ctx context.Context, ownerID, clientUUID 
 	err := s.pool.QueryRow(ctx,
 		`SELECT s.file_path FROM screenshots s
 		   JOIN businesses b ON b.id = s.business_id
-		  WHERE s.client_uuid = $1 AND b.owner_user_id = $2`,
+		  WHERE s.client_uuid = $1 AND EXISTS (
+		        SELECT 1 FROM memberships a WHERE a.business_id = b.id AND a.user_id = $2 AND a.role = 'owner')`,
 		clientUUID, ownerID).Scan(&path)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return "", ErrNotFound

@@ -71,10 +71,15 @@ func scanBusiness(s scanner) (Business, error) {
 	return b, err
 }
 
-// ListBusinessesOwnedBy returns the businesses a user owns.
+// ListBusinessesOwnedBy returns businesses the user can administer. The primary
+// owner and invited administrators both have an `owner` membership.
 func (s *Store) ListBusinessesOwnedBy(ctx context.Context, ownerID string) ([]Business, error) {
 	rows, err := s.pool.Query(ctx,
-		`SELECT `+businessCols+` FROM businesses WHERE owner_user_id = $1 ORDER BY created_at`, ownerID)
+		`SELECT `+businessCols+`
+		   FROM businesses b
+		  WHERE EXISTS (SELECT 1 FROM memberships m
+		                 WHERE m.business_id = b.id AND m.user_id = $1 AND m.role = 'owner')
+		  ORDER BY b.created_at`, ownerID)
 	if err != nil {
 		return nil, err
 	}
@@ -113,11 +118,15 @@ func (s *Store) CreateEmployee(ctx context.Context, ownerID string, businessID *
 		if err != nil {
 			return Employee{}, Business{}, err
 		}
-		if biz.OwnerUserID != ownerID {
+		var allowed bool
+		if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM memberships WHERE user_id = $1 AND business_id = $2 AND role = 'owner')`, ownerID, biz.ID).Scan(&allowed); err != nil {
+			return Employee{}, Business{}, err
+		}
+		if !allowed {
 			return Employee{}, Business{}, ErrForbidden
 		}
 	} else {
-		biz, err = firstOwnedBusinessTx(ctx, tx, ownerID)
+		biz, err = firstAdminBusinessTx(ctx, tx, ownerID)
 		if errors.Is(err, ErrNotFound) {
 			// Skip-business flow: auto-create a default business for this owner.
 			// A parent owner gets a 'family' business labelled "...'s Family".
@@ -189,6 +198,97 @@ func (s *Store) ListEmployees(ctx context.Context, businessID string) ([]Employe
 		out = append(out, e)
 	}
 	return out, rows.Err()
+}
+
+// Administrator is a user who can manage and report on a business. Primary is
+// true only for the immutable business owner; invited administrators can be removed.
+type Administrator struct {
+	ID          string `json:"id"`
+	Email       string `json:"email"`
+	Username    string `json:"username"`
+	DisplayName string `json:"display_name"`
+	Primary     bool   `json:"primary"`
+}
+
+func (s *Store) ListAdministrators(ctx context.Context, businessID string) ([]Administrator, error) {
+	rows, err := s.pool.Query(ctx, `
+		SELECT u.id, COALESCE(u.email, ''), COALESCE(u.username, ''), u.display_name,
+		       u.id = b.owner_user_id AS primary
+		  FROM memberships m
+		  JOIN users u ON u.id = m.user_id
+		  JOIN businesses b ON b.id = m.business_id
+		 WHERE m.business_id = $1 AND m.role = 'owner'
+		 ORDER BY primary DESC, u.display_name`, businessID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := []Administrator{}
+	for rows.Next() {
+		var a Administrator
+		if err := rows.Scan(&a.ID, &a.Email, &a.Username, &a.DisplayName, &a.Primary); err != nil {
+			return nil, err
+		}
+		out = append(out, a)
+	}
+	return out, rows.Err()
+}
+
+// CreateAdministrator creates a separate login and grants administrator access.
+// Only the primary owner may invite administrators.
+func (s *Store) CreateAdministrator(ctx context.Context, primaryOwnerID, businessID, email, username, passwordHash, displayName string) (Administrator, error) {
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		return Administrator{}, err
+	}
+	defer tx.Rollback(ctx)
+	var primary bool
+	if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM businesses WHERE id = $1 AND owner_user_id = $2)`, businessID, primaryOwnerID).Scan(&primary); err != nil {
+		return Administrator{}, err
+	}
+	if !primary {
+		return Administrator{}, ErrForbidden
+	}
+	var a Administrator
+	err = tx.QueryRow(ctx, `INSERT INTO users (email, username, password_hash, display_name)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id, COALESCE(email, ''), COALESCE(username, ''), display_name`, nullableLower(email), nullableLower(username), passwordHash, displayName).
+		Scan(&a.ID, &a.Email, &a.Username, &a.DisplayName)
+	if isUniqueViolation(err) {
+		return Administrator{}, ErrConflict
+	}
+	if err != nil {
+		return Administrator{}, err
+	}
+	if _, err := tx.Exec(ctx, `INSERT INTO memberships (user_id, business_id, role) VALUES ($1, $2, 'owner')`, a.ID, businessID); err != nil {
+		return Administrator{}, err
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return Administrator{}, err
+	}
+	return a, nil
+}
+
+func (s *Store) RemoveAdministrator(ctx context.Context, primaryOwnerID, businessID, adminID string) error {
+	var primary, targetPrimary bool
+	err := s.pool.QueryRow(ctx, `SELECT b.owner_user_id = $2, b.owner_user_id = $3 FROM businesses b WHERE b.id = $1`, businessID, primaryOwnerID, adminID).Scan(&primary, &targetPrimary)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return ErrNotFound
+	}
+	if err != nil {
+		return err
+	}
+	if !primary || targetPrimary {
+		return ErrForbidden
+	}
+	ct, err := s.pool.Exec(ctx, `DELETE FROM memberships WHERE business_id = $1 AND user_id = $2 AND role = 'owner'`, businessID, adminID)
+	if err != nil {
+		return err
+	}
+	if ct.RowsAffected() == 0 {
+		return ErrNotFound
+	}
+	return nil
 }
 
 // settableColumns whitelists the business columns owners may PATCH, guarding the
@@ -279,9 +379,11 @@ func getBusiness(ctx context.Context, q rowQuerier, id string) (Business, error)
 	return b, nil
 }
 
-func firstOwnedBusinessTx(ctx context.Context, tx pgx.Tx, ownerID string) (Business, error) {
+func firstAdminBusinessTx(ctx context.Context, tx pgx.Tx, ownerID string) (Business, error) {
 	b, err := scanBusiness(tx.QueryRow(ctx,
-		`SELECT `+businessCols+` FROM businesses WHERE owner_user_id = $1 ORDER BY created_at LIMIT 1`, ownerID))
+		`SELECT `+businessCols+` FROM businesses b
+		  WHERE EXISTS (SELECT 1 FROM memberships m WHERE m.business_id = b.id AND m.user_id = $1 AND m.role = 'owner')
+		  ORDER BY b.created_at LIMIT 1`, ownerID))
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Business{}, ErrNotFound
 	}
