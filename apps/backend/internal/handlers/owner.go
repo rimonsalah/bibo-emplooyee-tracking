@@ -153,6 +153,19 @@ func (h *OwnerHandler) ListAdministrators(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"administrators": list})
 }
 
+// ListLoginEvents returns recent successful logins for everyone in a workspace.
+func (h *OwnerHandler) ListLoginEvents(c *gin.Context) {
+	if !h.requireOwner(c) {
+		return
+	}
+	list, err := h.store.ListLoginEvents(c.Request.Context(), c.Param("id"), 200)
+	if err != nil {
+		serverError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"login_events": list})
+}
+
 type createAdministratorReq struct {
 	Email       string `json:"email"`
 	Username    string `json:"username"`

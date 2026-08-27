@@ -11,6 +11,7 @@ import { SignIn } from "./auth/SignIn";
 import { SignupWizard } from "./auth/SignupWizard";
 import { Settings } from "./pages/Settings";
 import { Administrators } from "./pages/Administrators";
+import { LoginHistory } from "./pages/LoginHistory";
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
                 <Route path="employees" element={<Employees />} />
                 <Route path="employees/:id" element={<EmployeeDetail />} />
                 <Route path="administrators" element={<Administrators />} />
+                <Route path="login-history" element={<LoginHistory />} />
                 <Route path="settings" element={<Settings />} />
               </Route>
             </Route>

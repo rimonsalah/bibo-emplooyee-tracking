@@ -87,6 +87,7 @@ func New(cfg *config.Config, st *store.Store, files *filestore.Store, ret *reten
 	authed.GET("/businesses/mine", ownerH.ListMine)
 	authed.GET("/businesses/:id/employees", ownerH.ListEmployees)
 	authed.GET("/businesses/:id/administrators", ownerH.ListAdministrators)
+	authed.GET("/businesses/:id/login-events", ownerH.ListLoginEvents)
 	authed.POST("/businesses/:id/administrators", ownerH.CreateAdministrator)
 	authed.DELETE("/businesses/:id/administrators/:adminId", ownerH.RemoveAdministrator)
 	authed.PATCH("/businesses/:id/settings", ownerH.UpdateSettings)

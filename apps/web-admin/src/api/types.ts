@@ -82,6 +82,20 @@ export interface Administrator {
   primary: boolean;
 }
 
+export interface LoginEvent {
+  id: string;
+  user_id: string;
+  display_name: string;
+  email: string;
+  username?: string;
+  role: "owner" | "employee";
+  ip_address: string;
+  user_agent: string;
+  country: string;
+  city: string;
+  created_at: string;
+}
+
 export interface CreateEmployeeResponse {
   employee: Employee;
   business: Business;

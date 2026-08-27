@@ -21,6 +21,7 @@ import type {
   CreateEmployeeResponse,
   Employee,
   KeystrokeBucket,
+  LoginEvent,
   PrivacyAppCategory,
   PublicBusiness,
   ReportEmployee,
@@ -148,6 +149,10 @@ export function createAdministrator(businessId: string, input: {
 
 export function removeAdministrator(businessId: string, administratorId: string) {
   return request<void>(`/v1/businesses/${businessId}/administrators/${administratorId}`, { method: "DELETE" });
+}
+
+export function listLoginEvents(businessId: string) {
+  return request<{ login_events: LoginEvent[] }>(`/v1/businesses/${businessId}/login-events`);
 }
 
 // ---------- reports ----------

@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"ctracking/backend/internal/auth"
@@ -125,7 +126,33 @@ func (h *AuthHandler) Login(c *gin.Context) {
 			return
 		}
 	}
+
+	var businessID *string
+	if req.BusinessID != "" {
+		businessID = &req.BusinessID
+	} else if resolved, err := h.store.ResolveBusinessForUser(c.Request.Context(), u.ID, nil); err == nil {
+		businessID = &resolved
+	}
+	city := firstHeader(c, "CF-IPCity", "X-Vercel-IP-City", "X-AppEngine-City")
+	if decoded, err := url.QueryUnescape(city); err == nil {
+		city = decoded
+	}
+	if err := h.store.RecordLogin(c.Request.Context(), u.ID, businessID,
+		c.ClientIP(), c.GetHeader("User-Agent"),
+		firstHeader(c, "CF-IPCountry", "X-Vercel-IP-Country", "X-AppEngine-Country"), city); err != nil {
+		// Audit persistence must not lock a valid user out if the database write fails.
+		obs.Warn("could not record login audit", "user", u.ID, "error", err)
+	}
 	h.issue(c, http.StatusOK, u)
+}
+
+func firstHeader(c *gin.Context, names ...string) string {
+	for _, name := range names {
+		if value := strings.TrimSpace(c.GetHeader(name)); value != "" {
+			return value
+		}
+	}
+	return ""
 }
 
 type refreshReq struct {

@@ -86,6 +86,13 @@ const AdminIcon = () => (
   </RailIcon>
 );
 
+const LoginHistoryIcon = () => (
+  <RailIcon>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7v5l3 2" />
+  </RailIcon>
+);
+
 const ChevronsUpDownIcon = () => (
   <RailIcon>
     <path d="m7 15 5 5 5-5" />
@@ -281,6 +288,7 @@ export function AppShell() {
     { to: "/", label: t("nav.dashboard"), end: true, icon: <DashboardIcon /> },
     { to: "/employees", label: terms.many, end: false, icon: <MembersIcon /> },
     { to: "/administrators", label: "Administrators", end: false, icon: <AdminIcon /> },
+    { to: "/login-history", label: "Login history", end: false, icon: <LoginHistoryIcon /> },
     { to: "/settings", label: t("nav.settings"), end: false, icon: <SettingsIcon /> },
   ];
 
