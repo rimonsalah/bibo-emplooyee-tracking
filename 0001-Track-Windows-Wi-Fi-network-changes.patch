@@ -1,0 +1,663 @@
+From 82ed96ddb366661b9440bb726df04903a3f02d51 Mon Sep 17 00:00:00 2001
+From: Codex <codex@local>
+Date: Thu, 27 Aug 2026 13:33:43 -0500
+Subject: [PATCH] Track Windows Wi-Fi network changes
+
+---
+ .../db/migrations/00012_network_events.sql    |  26 ++++
+ apps/backend/internal/handlers/owner.go       |  12 ++
+ apps/backend/internal/handlers/sync.go        |  62 ++++++++
+ apps/backend/internal/server/server.go        |   2 +
+ apps/backend/internal/store/network.go        |  88 ++++++++++++
+ apps/desktop/src-tauri/src/lib.rs             |   5 +
+ apps/desktop/src-tauri/src/network.rs         | 136 ++++++++++++++++++
+ apps/desktop/src-tauri/src/sync/client.rs     |  41 ++++++
+ apps/web-admin/src/App.tsx                    |   2 +
+ apps/web-admin/src/api/endpoints.ts           |   5 +
+ apps/web-admin/src/api/types.ts               |  20 +++
+ apps/web-admin/src/components/AppShell.tsx    |   9 ++
+ apps/web-admin/src/pages/NetworkHistory.tsx   |  55 +++++++
+ 13 files changed, 463 insertions(+)
+ create mode 100644 apps/backend/internal/db/migrations/00012_network_events.sql
+ create mode 100644 apps/backend/internal/store/network.go
+ create mode 100644 apps/desktop/src-tauri/src/network.rs
+ create mode 100644 apps/web-admin/src/pages/NetworkHistory.tsx
+
+diff --git a/apps/backend/internal/db/migrations/00012_network_events.sql b/apps/backend/internal/db/migrations/00012_network_events.sql
+new file mode 100644
+index 0000000..41d09ea
+--- /dev/null
++++ b/apps/backend/internal/db/migrations/00012_network_events.sql
+@@ -0,0 +1,26 @@
++-- +goose Up
++CREATE TABLE network_events (
++    id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
++    client_uuid    uuid NOT NULL UNIQUE,
++    user_id        uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
++    business_id    uuid NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
++    device_id      uuid NOT NULL,
++    event_type     text NOT NULL CHECK (event_type IN ('connected', 'switched', 'disconnected')),
++    previous_ssid  text NOT NULL DEFAULT '',
++    ssid           text NOT NULL DEFAULT '',
++    bssid          text NOT NULL DEFAULT '',
++    interface_name text NOT NULL DEFAULT '',
++    local_ip       text NOT NULL DEFAULT '',
++    public_ip      text NOT NULL DEFAULT '',
++    signal_pct     integer CHECK (signal_pct IS NULL OR signal_pct BETWEEN 0 AND 100),
++    country        text NOT NULL DEFAULT '',
++    city           text NOT NULL DEFAULT '',
++    occurred_at    timestamptz NOT NULL,
++    received_at    timestamptz NOT NULL DEFAULT now()
++);
++
++CREATE INDEX idx_network_events_business_time
++    ON network_events(business_id, occurred_at DESC);
++
++-- +goose Down
++DROP TABLE IF EXISTS network_events;
+diff --git a/apps/backend/internal/handlers/owner.go b/apps/backend/internal/handlers/owner.go
+index 6bdf523..537da7c 100644
+--- a/apps/backend/internal/handlers/owner.go
++++ b/apps/backend/internal/handlers/owner.go
+@@ -166,6 +166,18 @@ func (h *OwnerHandler) ListLoginEvents(c *gin.Context) {
+ 	c.JSON(http.StatusOK, gin.H{"login_events": list})
+ }
+ 
++func (h *OwnerHandler) ListNetworkEvents(c *gin.Context) {
++	if !h.requireOwner(c) {
++		return
++	}
++	list, err := h.store.ListNetworkEvents(c.Request.Context(), c.Param("id"), 200)
++	if err != nil {
++		serverError(c, err)
++		return
++	}
++	c.JSON(http.StatusOK, gin.H{"network_events": list})
++}
++
+ type createAdministratorReq struct {
+ 	Email       string `json:"email"`
+ 	Username    string `json:"username"`
+diff --git a/apps/backend/internal/handlers/sync.go b/apps/backend/internal/handlers/sync.go
+index dd792d2..cd7368c 100644
+--- a/apps/backend/internal/handlers/sync.go
++++ b/apps/backend/internal/handlers/sync.go
+@@ -4,6 +4,9 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"net/http"
++	"net/url"
++	"strings"
++	"time"
+ 
+ 	"ctracking/backend/internal/auth"
+ 	"ctracking/backend/internal/obs"
+@@ -21,6 +24,65 @@ type SyncHandler struct {
+ 	store *store.Store
+ }
+ 
++type networkEventReq struct {
++	ClientUUID   string `json:"client_uuid"`
++	DeviceID     string `json:"device_id"`
++	BusinessID   *string `json:"business_id"`
++	EventType    string `json:"event_type"`
++	PreviousSSID string `json:"previous_ssid"`
++	SSID         string `json:"ssid"`
++	BSSID        string `json:"bssid"`
++	Interface    string `json:"interface_name"`
++	LocalIP      string `json:"local_ip"`
++	SignalPct    *int   `json:"signal_pct"`
++	OccurredAt   int64  `json:"occurred_at"`
++}
++
++// NetworkEvent records a Windows desktop connection, switch, or disconnect.
++// Passwords and Wi-Fi authentication material are never accepted.
++func (h *SyncHandler) NetworkEvent(c *gin.Context) {
++	userID, _ := auth.UserID(c)
++	var req networkEventReq
++	if err := c.ShouldBindJSON(&req); err != nil {
++		badRequest(c, "invalid body")
++		return
++	}
++	if validUUID(req.ClientUUID) != nil || validUUID(req.DeviceID) != nil {
++		badRequest(c, "client_uuid and device_id must be UUIDs")
++		return
++	}
++	if req.EventType != "connected" && req.EventType != "switched" && req.EventType != "disconnected" {
++		badRequest(c, "invalid event_type")
++		return
++	}
++	if req.SignalPct != nil && (*req.SignalPct < 0 || *req.SignalPct > 100) {
++		badRequest(c, "signal_pct must be between 0 and 100")
++		return
++	}
++	businessID, err := h.store.ResolveBusinessForUser(c.Request.Context(), userID, req.BusinessID)
++	if err != nil {
++		c.JSON(http.StatusForbidden, gin.H{"error": "not a member of that business"})
++		return
++	}
++	city := firstHeader(c, "CF-IPCity", "X-Vercel-IP-City", "X-AppEngine-City")
++	if decoded, err := url.QueryUnescape(city); err == nil {
++		city = decoded
++	}
++	event := store.NetworkEventRow{
++		ClientUUID: req.ClientUUID, DeviceID: req.DeviceID, EventType: req.EventType,
++		PreviousSSID: strings.TrimSpace(req.PreviousSSID), SSID: strings.TrimSpace(req.SSID),
++		BSSID: strings.TrimSpace(req.BSSID), Interface: strings.TrimSpace(req.Interface),
++		LocalIP: strings.TrimSpace(req.LocalIP), PublicIP: c.ClientIP(), SignalPct: req.SignalPct,
++		Country: firstHeader(c, "CF-IPCountry", "X-Vercel-IP-Country", "X-AppEngine-Country"),
++		City: city, OccurredAt: time.Unix(req.OccurredAt, 0).UTC(),
++	}
++	if err := h.store.RecordNetworkEvent(c.Request.Context(), userID, businessID, event); err != nil {
++		serverError(c, err)
++		return
++	}
++	c.Status(http.StatusNoContent)
++}
++
+ // NewSyncHandler wires the sync handler.
+ func NewSyncHandler(s *store.Store) *SyncHandler {
+ 	return &SyncHandler{store: s}
+diff --git a/apps/backend/internal/server/server.go b/apps/backend/internal/server/server.go
+index 9a95045..87d49f7 100644
+--- a/apps/backend/internal/server/server.go
++++ b/apps/backend/internal/server/server.go
+@@ -88,6 +88,7 @@ func New(cfg *config.Config, st *store.Store, files *filestore.Store, ret *reten
+ 	authed.GET("/businesses/:id/employees", ownerH.ListEmployees)
+ 	authed.GET("/businesses/:id/administrators", ownerH.ListAdministrators)
+ 	authed.GET("/businesses/:id/login-events", ownerH.ListLoginEvents)
++	authed.GET("/businesses/:id/network-events", ownerH.ListNetworkEvents)
+ 	authed.POST("/businesses/:id/administrators", ownerH.CreateAdministrator)
+ 	authed.DELETE("/businesses/:id/administrators/:adminId", ownerH.RemoveAdministrator)
+ 	authed.PATCH("/businesses/:id/settings", ownerH.UpdateSettings)
+@@ -99,6 +100,7 @@ func New(cfg *config.Config, st *store.Store, files *filestore.Store, ret *reten
+ 
+ 	// Sync ingest (desktop → backend, one-directional).
+ 	authed.POST("/sync/batch", syncH.Batch)
++	authed.POST("/sync/network-events", syncH.NetworkEvent)
+ 	authed.POST("/sync/screenshots", shotH.Upload)
+ 
+ 	// Owner read path (reporting).
+diff --git a/apps/backend/internal/store/network.go b/apps/backend/internal/store/network.go
+new file mode 100644
+index 0000000..73e58c4
+--- /dev/null
++++ b/apps/backend/internal/store/network.go
+@@ -0,0 +1,88 @@
++package store
++
++import (
++	"context"
++	"time"
++)
++
++type NetworkEventRow struct {
++	ClientUUID   string
++	DeviceID     string
++	EventType    string
++	PreviousSSID string
++	SSID         string
++	BSSID        string
++	Interface    string
++	LocalIP      string
++	PublicIP     string
++	SignalPct    *int
++	Country      string
++	City         string
++	OccurredAt   time.Time
++}
++
++type NetworkEvent struct {
++	ID           string    `json:"id"`
++	UserID       string    `json:"user_id"`
++	DisplayName  string    `json:"display_name"`
++	Email        string    `json:"email"`
++	Username     string    `json:"username"`
++	DeviceID     string    `json:"device_id"`
++	EventType    string    `json:"event_type"`
++	PreviousSSID string    `json:"previous_ssid"`
++	SSID         string    `json:"ssid"`
++	BSSID        string    `json:"bssid"`
++	Interface    string    `json:"interface_name"`
++	LocalIP      string    `json:"local_ip"`
++	PublicIP     string    `json:"public_ip"`
++	SignalPct    *int      `json:"signal_pct"`
++	Country      string    `json:"country"`
++	City         string    `json:"city"`
++	OccurredAt   time.Time `json:"occurred_at"`
++}
++
++func (s *Store) RecordNetworkEvent(ctx context.Context, userID, businessID string, event NetworkEventRow) error {
++	_, err := s.pool.Exec(ctx, `
++		INSERT INTO network_events
++		  (client_uuid, user_id, business_id, device_id, event_type, previous_ssid,
++		   ssid, bssid, interface_name, local_ip, public_ip, signal_pct, country, city, occurred_at)
++		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
++		ON CONFLICT (client_uuid) DO NOTHING`,
++		event.ClientUUID, userID, businessID, event.DeviceID, event.EventType,
++		event.PreviousSSID, event.SSID, event.BSSID, event.Interface, event.LocalIP,
++		event.PublicIP, event.SignalPct, event.Country, event.City, event.OccurredAt)
++	return err
++}
++
++func (s *Store) ListNetworkEvents(ctx context.Context, businessID string, limit int) ([]NetworkEvent, error) {
++	if limit <= 0 || limit > 500 {
++		limit = 200
++	}
++	rows, err := s.pool.Query(ctx, `
++		SELECT n.id, u.id, u.display_name, COALESCE(u.email, ''), COALESCE(u.username, ''),
++		       n.device_id, n.event_type, n.previous_ssid, n.ssid, n.bssid,
++		       n.interface_name, n.local_ip, n.public_ip, n.signal_pct,
++		       n.country, n.city, n.occurred_at
++		  FROM network_events n
++		  JOIN users u ON u.id = n.user_id
++		 WHERE n.business_id = $1
++		 ORDER BY n.occurred_at DESC
++		 LIMIT $2`, businessID, limit)
++	if err != nil {
++		return nil, err
++	}
++	defer rows.Close()
++	out := []NetworkEvent{}
++	for rows.Next() {
++		var event NetworkEvent
++		if err := rows.Scan(&event.ID, &event.UserID, &event.DisplayName, &event.Email,
++			&event.Username, &event.DeviceID, &event.EventType, &event.PreviousSSID,
++			&event.SSID, &event.BSSID, &event.Interface, &event.LocalIP,
++			&event.PublicIP, &event.SignalPct, &event.Country, &event.City,
++			&event.OccurredAt); err != nil {
++			return nil, err
++		}
++		out = append(out, event)
++	}
++	return out, rows.Err()
++}
+diff --git a/apps/desktop/src-tauri/src/lib.rs b/apps/desktop/src-tauri/src/lib.rs
+index e78b58e..e49df9f 100644
+--- a/apps/desktop/src-tauri/src/lib.rs
++++ b/apps/desktop/src-tauri/src/lib.rs
+@@ -3,6 +3,7 @@
+ 
+ mod analytics;
+ mod commands;
++mod network;
+ mod obs;
+ mod platform;
+ mod server;
+@@ -192,6 +193,10 @@ pub fn run() {
+             let auth = Arc::new(sync::AuthState::load(data_dir.join("session.json")));
+             app.manage(auth.clone());
+ 
++            // Windows network observer: records SSID changes only while the app is
++            // running and the employee is signed in. Never reads Wi-Fi passwords.
++            network::start(auth.clone(), settings_state.clone());
++
+             // Sync worker (task 53): pushes pending rows to the backend in the
+             // background. No-op while logged out / offline.
+             let status = Arc::new(sync::worker::SyncStatus::default());
+diff --git a/apps/desktop/src-tauri/src/network.rs b/apps/desktop/src-tauri/src/network.rs
+new file mode 100644
+index 0000000..fb71b94
+--- /dev/null
++++ b/apps/desktop/src-tauri/src/network.rs
+@@ -0,0 +1,136 @@
++//! Windows Wi-Fi transition observer. Collects connection metadata only—never
++//! passwords, saved profiles, or authentication material.
++
++use std::sync::Arc;
++
++use crate::settings::SettingsState;
++use crate::sync::client::{BackendClient, NetworkEventIn};
++use crate::sync::AuthState;
++
++#[cfg(target_os = "windows")]
++#[derive(Debug, Clone, Default, PartialEq)]
++struct Snapshot {
++    ssid: String,
++    bssid: String,
++    interface_name: String,
++    local_ip: String,
++    signal_pct: Option<i32>,
++}
++
++#[cfg(target_os = "windows")]
++pub fn start(auth: Arc<AuthState>, settings: Arc<SettingsState>) {
++    std::thread::spawn(move || {
++        let runtime = match tokio::runtime::Builder::new_current_thread()
++            .enable_all()
++            .build()
++        {
++            Ok(runtime) => runtime,
++            Err(error) => {
++                crate::log_warn!("network", "runtime build failed: {error}");
++                return;
++            }
++        };
++        runtime.block_on(observe(auth, settings));
++    });
++}
++
++#[cfg(not(target_os = "windows"))]
++pub fn start(_auth: Arc<AuthState>, _settings: Arc<SettingsState>) {}
++
++#[cfg(target_os = "windows")]
++async fn observe(auth: Arc<AuthState>, settings: Arc<SettingsState>) {
++    use std::collections::VecDeque;
++    use std::time::Duration;
++
++    let mut previous: Option<Snapshot> = None;
++    let mut pending: VecDeque<NetworkEventIn> = VecDeque::new();
++
++    loop {
++        let current = read_snapshot();
++        if current != previous {
++            let event_type = match (&previous, &current) {
++                (None, Some(_)) => "connected",
++                (Some(_), None) => "disconnected",
++                (Some(_), Some(_)) => "switched",
++                (None, None) => "disconnected",
++            };
++            let old_ssid = previous.as_ref().map(|s| s.ssid.clone()).unwrap_or_default();
++            let now = current.clone().unwrap_or_default();
++            let configured = settings.current.lock().unwrap().clone();
++            if !configured.device_id.is_empty() {
++                pending.push_back(NetworkEventIn {
++                    client_uuid: uuid::Uuid::new_v4().to_string(),
++                    device_id: configured.device_id,
++                    business_id: auth.session().and_then(|session| session.business_id),
++                    event_type: event_type.to_string(),
++                    previous_ssid: old_ssid,
++                    ssid: now.ssid,
++                    bssid: now.bssid,
++                    interface_name: now.interface_name,
++                    local_ip: now.local_ip,
++                    signal_pct: now.signal_pct,
++                    occurred_at: crate::now_unix(),
++                });
++            }
++            previous = current;
++        }
++
++        if auth.is_logged_in() {
++            if let Some(event) = pending.front() {
++                let client = BackendClient::new(crate::settings::backend_base_url(), auth.clone());
++                if client.sync_network_event(event).await.is_ok() {
++                    pending.pop_front();
++                }
++            }
++        }
++        tokio::time::sleep(Duration::from_secs(10)).await;
++    }
++}
++
++#[cfg(target_os = "windows")]
++fn read_snapshot() -> Option<Snapshot> {
++    use std::os::windows::process::CommandExt;
++    use std::process::Command;
++
++    const CREATE_NO_WINDOW: u32 = 0x08000000;
++    let output = Command::new("netsh")
++        .args(["wlan", "show", "interfaces"])
++        .creation_flags(CREATE_NO_WINDOW)
++        .output()
++        .ok()?;
++    if !output.status.success() {
++        return None;
++    }
++    let text = String::from_utf8_lossy(&output.stdout);
++    let mut snapshot = Snapshot::default();
++    for line in text.lines() {
++        let Some((raw_key, raw_value)) = line.split_once(':') else { continue };
++        let key = raw_key.trim().to_ascii_lowercase();
++        let value = raw_value.trim();
++        match key.as_str() {
++            "name" => snapshot.interface_name = value.to_string(),
++            "ssid" => snapshot.ssid = value.to_string(),
++            "bssid" => snapshot.bssid = value.to_string(),
++            "signal" => snapshot.signal_pct = value.trim_end_matches('%').parse().ok(),
++            _ => {}
++        }
++    }
++    // SSID/BSSID are WLAN protocol labels and remain stable even on localized
++    // Windows installations; human-readable fields such as "State" do not.
++    if snapshot.ssid.is_empty() {
++        return None;
++    }
++    snapshot.local_ip = local_ip();
++    Some(snapshot)
++}
++
++#[cfg(target_os = "windows")]
++fn local_ip() -> String {
++    std::net::UdpSocket::bind("0.0.0.0:0")
++        .and_then(|socket| {
++            socket.connect("1.1.1.1:80")?;
++            socket.local_addr()
++        })
++        .map(|address| address.ip().to_string())
++        .unwrap_or_default()
++}
+diff --git a/apps/desktop/src-tauri/src/sync/client.rs b/apps/desktop/src-tauri/src/sync/client.rs
+index f11ffc2..76f3395 100644
+--- a/apps/desktop/src-tauri/src/sync/client.rs
++++ b/apps/desktop/src-tauri/src/sync/client.rs
+@@ -97,6 +97,22 @@ pub struct PrivacyAppCategory {
+     pub apps: Vec<String>,
+ }
+ 
++#[derive(Debug, Clone, Serialize)]
++pub struct NetworkEventIn {
++    pub client_uuid: String,
++    pub device_id: String,
++    #[serde(skip_serializing_if = "Option::is_none")]
++    pub business_id: Option<String>,
++    pub event_type: String,
++    pub previous_ssid: String,
++    pub ssid: String,
++    pub bssid: String,
++    pub interface_name: String,
++    pub local_ip: String,
++    pub signal_pct: Option<i32>,
++    pub occurred_at: i64,
++}
++
+ #[derive(Deserialize)]
+ struct PrivacyAppsResp {
+     categories: Vec<PrivacyAppCategory>,
+@@ -286,6 +302,31 @@ impl BackendClient {
+ 
+     // ---------- sync (task 53) ----------
+ 
++    /// Upload one queued network transition. The backend derives the public IP
++    /// from the request; the desktop sends connection metadata only.
++    pub async fn sync_network_event(&self, event: &NetworkEventIn) -> Result<(), String> {
++        let mut token = self.access_token()?;
++        for attempt in 0..2 {
++            let resp = self
++                .http
++                .post(self.url("/v1/sync/network-events"))
++                .bearer_auth(&token)
++                .json(event)
++                .send()
++                .await
++                .map_err(net_err)?;
++            if resp.status() == reqwest::StatusCode::UNAUTHORIZED && attempt == 0 {
++                token = self.refresh().await?;
++                continue;
++            }
++            if !resp.status().is_success() {
++                return Err(status_err(resp).await);
++            }
++            return Ok(());
++        }
++        Err("sync_network_event: unreachable retry exhaustion".into())
++    }
++
+     /// `POST /v1/sync/batch` with auto-refresh on 401. Returns the accepted uuids
+     /// per kind. `device_id` and the (optional) `business_id` come from settings/
+     /// session.
+diff --git a/apps/web-admin/src/App.tsx b/apps/web-admin/src/App.tsx
+index 5af8784..b859f0f 100644
+--- a/apps/web-admin/src/App.tsx
++++ b/apps/web-admin/src/App.tsx
+@@ -12,6 +12,7 @@ import { SignupWizard } from "./auth/SignupWizard";
+ import { Settings } from "./pages/Settings";
+ import { Administrators } from "./pages/Administrators";
+ import { LoginHistory } from "./pages/LoginHistory";
++import { NetworkHistory } from "./pages/NetworkHistory";
+ 
+ export default function App() {
+   return (
+@@ -34,6 +35,7 @@ export default function App() {
+                 <Route path="employees/:id" element={<EmployeeDetail />} />
+                 <Route path="administrators" element={<Administrators />} />
+                 <Route path="login-history" element={<LoginHistory />} />
++                <Route path="network-history" element={<NetworkHistory />} />
+                 <Route path="settings" element={<Settings />} />
+               </Route>
+             </Route>
+diff --git a/apps/web-admin/src/api/endpoints.ts b/apps/web-admin/src/api/endpoints.ts
+index f1f8551..989d97c 100644
+--- a/apps/web-admin/src/api/endpoints.ts
++++ b/apps/web-admin/src/api/endpoints.ts
+@@ -22,6 +22,7 @@ import type {
+   Employee,
+   KeystrokeBucket,
+   LoginEvent,
++  NetworkEvent,
+   PrivacyAppCategory,
+   PublicBusiness,
+   ReportEmployee,
+@@ -155,6 +156,10 @@ export function listLoginEvents(businessId: string) {
+   return request<{ login_events: LoginEvent[] }>(`/v1/businesses/${businessId}/login-events`);
+ }
+ 
++export function listNetworkEvents(businessId: string) {
++  return request<{ network_events: NetworkEvent[] }>(`/v1/businesses/${businessId}/network-events`);
++}
++
+ // ---------- reports ----------
+ export function reportEmployees(businessId: string) {
+   if (isDemo()) return Promise.resolve({ employees: demoRoster() });
+diff --git a/apps/web-admin/src/api/types.ts b/apps/web-admin/src/api/types.ts
+index eb9a7ea..dc438ac 100644
+--- a/apps/web-admin/src/api/types.ts
++++ b/apps/web-admin/src/api/types.ts
+@@ -96,6 +96,26 @@ export interface LoginEvent {
+   created_at: string;
+ }
+ 
++export interface NetworkEvent {
++  id: string;
++  user_id: string;
++  display_name: string;
++  email: string;
++  username?: string;
++  device_id: string;
++  event_type: "connected" | "switched" | "disconnected";
++  previous_ssid: string;
++  ssid: string;
++  bssid: string;
++  interface_name: string;
++  local_ip: string;
++  public_ip: string;
++  signal_pct: number | null;
++  country: string;
++  city: string;
++  occurred_at: string;
++}
++
+ export interface CreateEmployeeResponse {
+   employee: Employee;
+   business: Business;
+diff --git a/apps/web-admin/src/components/AppShell.tsx b/apps/web-admin/src/components/AppShell.tsx
+index bde0247..8f575ab 100644
+--- a/apps/web-admin/src/components/AppShell.tsx
++++ b/apps/web-admin/src/components/AppShell.tsx
+@@ -93,6 +93,14 @@ const LoginHistoryIcon = () => (
+   </RailIcon>
+ );
+ 
++const NetworkIcon = () => (
++  <RailIcon>
++    <path d="M5 12.5a10 10 0 0 1 14 0" />
++    <path d="M8 16a6 6 0 0 1 8 0" />
++    <path d="M11 19.5a2 2 0 0 1 2 0" />
++  </RailIcon>
++);
++
+ const ChevronsUpDownIcon = () => (
+   <RailIcon>
+     <path d="m7 15 5 5 5-5" />
+@@ -289,6 +297,7 @@ export function AppShell() {
+     { to: "/employees", label: terms.many, end: false, icon: <MembersIcon /> },
+     { to: "/administrators", label: "Administrators", end: false, icon: <AdminIcon /> },
+     { to: "/login-history", label: "Login history", end: false, icon: <LoginHistoryIcon /> },
++    { to: "/network-history", label: "Wi-Fi history", end: false, icon: <NetworkIcon /> },
+     { to: "/settings", label: t("nav.settings"), end: false, icon: <SettingsIcon /> },
+   ];
+ 
+diff --git a/apps/web-admin/src/pages/NetworkHistory.tsx b/apps/web-admin/src/pages/NetworkHistory.tsx
+new file mode 100644
+index 0000000..ab148a1
+--- /dev/null
++++ b/apps/web-admin/src/pages/NetworkHistory.tsx
+@@ -0,0 +1,55 @@
++import { useEffect, useState } from "react";
++import { listNetworkEvents } from "../api/endpoints";
++import { ApiError, type NetworkEvent } from "../api/types";
++import { Empty, Notice, Spinner } from "../components/ui";
++import { useBusinesses } from "../useBusinesses";
++
++function eventLabel(event: NetworkEvent) {
++  if (event.event_type === "switched") return `${event.previous_ssid || "Unknown"} → ${event.ssid || "Unknown"}`;
++  if (event.event_type === "disconnected") return `Disconnected from ${event.previous_ssid || "Wi-Fi"}`;
++  return `Connected to ${event.ssid || "Wi-Fi"}`;
++}
++
++export function NetworkHistory() {
++  const { selected, selectedId, loading: businessLoading } = useBusinesses();
++  const [events, setEvents] = useState<NetworkEvent[]>([]);
++  const [loading, setLoading] = useState(false);
++  const [error, setError] = useState("");
++
++  useEffect(() => {
++    if (!selectedId) return;
++    setLoading(true);
++    setError("");
++    void listNetworkEvents(selectedId)
++      .then(result => setEvents(result.network_events))
++      .catch(err => setError(err instanceof ApiError ? err.message : "Could not load Wi-Fi history."))
++      .finally(() => setLoading(false));
++  }, [selectedId]);
++
++  return <div className="ad-wrap" style={{ paddingBottom: 32 }}>
++    <div className="ad-pagehead"><div className="ad-pagehead__main">
++      <h1 className="ad-h1">Wi-Fi history</h1>
++      <p className="ad-sub">Windows network changes for {selected?.name ?? "this workspace"}.</p>
++    </div></div>
++    <Notice kind="info">BiBoTracking records network names and connection metadata—not Wi-Fi passwords. Public-IP locations are approximate.</Notice>
++    {error && <Notice kind="danger">{error}</Notice>}
++    {(businessLoading || loading) && <Spinner label="Loading Wi-Fi history…" />}
++    {!businessLoading && !loading && !selected && <Empty>Create or select a workspace first.</Empty>}
++    {!loading && selected && events.length === 0 && <Empty>No Wi-Fi changes recorded yet. Install the updated Windows desktop app and sign in.</Empty>}
++    {!loading && events.length > 0 && <div className="card" style={{ marginTop: 18, overflowX: "auto" }}>
++      <table className="ad-table"><thead><tr>
++        <th>User</th><th>Network change</th><th>Date and time</th><th>Public IP</th><th>Location</th><th>Details</th>
++      </tr></thead><tbody>{events.map(event => <tr key={event.id}>
++        <td><strong>{event.display_name}</strong><div className="ad-login">{event.email || event.username}</div></td>
++        <td><strong>{eventLabel(event)}</strong></td>
++        <td>{new Date(event.occurred_at).toLocaleString()}</td>
++        <td><code>{event.public_ip || "—"}</code></td>
++        <td>{[event.city, event.country].filter(Boolean).join(", ") || "Not available"}</td>
++        <td title={`Device ${event.device_id}`}>
++          <div>{event.bssid ? `Access point: ${event.bssid}` : "No access point"}</div>
++          <div className="ad-login">Local IP: {event.local_ip || "—"} · Signal: {event.signal_pct == null ? "—" : `${event.signal_pct}%`}</div>
++        </td>
++      </tr>)}</tbody></table>
++    </div>}
++  </div>;
++}
+-- 
+2.51.1
+
