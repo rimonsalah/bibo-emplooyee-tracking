@@ -1,0 +1,157 @@
+From 921bae95d5e8c7244d7303fbe764536352edc34b Mon Sep 17 00:00:00 2001
+From: Codex <codex@local>
+Date: Thu, 27 Aug 2026 12:44:04 -0500
+Subject: [PATCH] Export detailed activity reports and screenshots
+
+---
+ .../components/reports/ScreenshotGallery.tsx  | 33 ++++++++++++
+ apps/web-admin/src/pages/EmployeeDetail.tsx   | 54 +++++++++++++++++++
+ 2 files changed, 87 insertions(+)
+
+diff --git a/apps/web-admin/src/components/reports/ScreenshotGallery.tsx b/apps/web-admin/src/components/reports/ScreenshotGallery.tsx
+index 683d43b..c2f188e 100644
+--- a/apps/web-admin/src/components/reports/ScreenshotGallery.tsx
++++ b/apps/web-admin/src/components/reports/ScreenshotGallery.tsx
+@@ -34,6 +34,20 @@ const hhmmss = (ts: number) => {
+ };
+ 
+ // One gallery card: real thumbnail when it loads, gradient placeholder before.
++async function downloadScreenshot(meta: ScreenshotMeta) {
++  const url = await fetchImageObjectUrl(meta.client_uuid);
++  try {
++    const link = document.createElement("a");
++    link.href = url;
++    link.download = `screenshot-${new Date(meta.ts * 1000).toISOString().replace(/[:.]/g, "-")}.webp`;
++    document.body.appendChild(link);
++    link.click();
++    link.remove();
++  } finally {
++    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
++  }
++}
++
+ function Shot({ meta, onOpen }: { meta: ShotMeta; onOpen: () => void }) {
+   const [url, setUrl] = useState<string | null>(null);
+ 
+@@ -62,6 +76,17 @@ function Shot({ meta, onOpen }: { meta: ShotMeta; onOpen: () => void }) {
+       <div className="ad-shot__veil" />
+       {meta.app && <span className="ad-shot__app">{meta.app}</span>}
+       <span className="ad-shot__t">{hhmmss(meta.ts)}</span>
++      <button
++        type="button"
++        className="bibo-btn bibo-btn--secondary bibo-btn--sm"
++        style={{ position: "absolute", top: 8, right: 8, zIndex: 3 }}
++        onClick={(event) => {
++          event.stopPropagation();
++          void downloadScreenshot(meta);
++        }}
++      >
++        Download
++      </button>
+     </div>
+   );
+ }
+@@ -179,6 +204,14 @@ function Lightbox({
+           {index + 1} / {shots.length} · {fmtTime(meta.ts)} · {meta.width}×{meta.height} ·{" "}
+           {t("screenshots.display", { id: meta.display_id })} · {fmtBytes(meta.byte_size)}
+         </figcaption>
++        <button
++          type="button"
++          className="bibo-btn bibo-btn--primary"
++          style={{ marginTop: 12 }}
++          onClick={() => void downloadScreenshot(meta)}
++        >
++          Download screenshot
++        </button>
+       </figure>
+     </div>,
+     document.body,
+diff --git a/apps/web-admin/src/pages/EmployeeDetail.tsx b/apps/web-admin/src/pages/EmployeeDetail.tsx
+index 978d826..972b787 100644
+--- a/apps/web-admin/src/pages/EmployeeDetail.tsx
++++ b/apps/web-admin/src/pages/EmployeeDetail.tsx
+@@ -41,6 +41,7 @@ const IconClock = svg(<><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /
+ const IconAppWindow = svg(<><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M10 4v4" /><path d="M2 8h20" /><path d="M6 4v4" /></>);
+ const IconKeyboard = svg(<><path d="M10 8h.01" /><path d="M12 12h.01" /><path d="M14 8h.01" /><path d="M16 12h.01" /><path d="M18 8h.01" /><path d="M6 8h.01" /><path d="M7 16h10" /><path d="M8 12h.01" /><rect width="20" height="16" x="2" y="4" rx="2" /></>);
+ const IconCamera = svg(<><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /><circle cx="12" cy="13" r="3" /></>);
++const IconDownload = svg(<><path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" /></>);
+ const TrendUp = (
+   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+     <path d="M7 17 17 7M9 7h8v8" />
+@@ -59,6 +60,24 @@ function memberStatus(lastSeen: number | null): Status {
+   return "offline";
+ }
+ 
++function csvCell(value: string | number) {
++  const text = String(value);
++  const safe = /^[=+\-@]/.test(text) ? `'${text}` : text;
++  return `"${safe.replace(/"/g, '""')}"`;
++}
++
++function saveCSV(filename: string, rows: (string | number)[][]) {
++  const csv = `\uFEFF${rows.map(row => row.map(csvCell).join(",")).join("\r\n")}`;
++  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
++  const link = document.createElement("a");
++  link.href = url;
++  link.download = filename;
++  document.body.appendChild(link);
++  link.click();
++  link.remove();
++  URL.revokeObjectURL(url);
++}
++
+ // ── detail stat card (no sparkline — matches the detail layout) ──────
+ function StatCard(props: {
+   icon: ReactNode;
+@@ -179,6 +198,31 @@ export function EmployeeDetail() {
+   const isSelf = employee?.role === "owner" || (!!employee && employee.id === user?.id);
+   const status = memberStatus(employee?.last_seen ?? null);
+ 
++  function exportAllReports() {
++    if (!activity || !keystrokes || !visits) return;
++    const rows: (string | number)[][] = [[
++      "Report type", "Timestamp", "Application", "Window title", "URL",
++      "Page title", "Browser", "Duration seconds", "Keystroke count",
++    ]];
++    activity.samples.forEach(sample => rows.push([
++      "Activity", new Date(sample.ts * 1000).toISOString(), sample.app_name,
++      sample.window_title, "", "", "", sample.duration_s, "",
++    ]));
++    activity.breakdown.forEach(item => rows.push([
++      "Application summary", "", item.app_name, "", "", "", "", item.duration_s, "",
++    ]));
++    keystrokes.forEach(bucket => rows.push([
++      "Keystrokes", new Date(bucket.ts_bucket * 1000).toISOString(), "", "", "", "", "", "", bucket.count,
++    ]));
++    visits.forEach(visit => rows.push([
++      "Browser", new Date(visit.ts * 1000).toISOString(), "", "", visit.url,
++      visit.page_title, visit.browser, visit.duration_s, "",
++    ]));
++    const range = mode === "day" ? day : `${from}-to-${to}`;
++    const employeeName = name.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "employee";
++    saveCSV(`${employeeName}-activity-report-${range}.csv`, rows);
++  }
++
+   const dateInput = (value: string, onChange: (v: string) => void, min?: string, max?: string) => (
+     <input type="date" value={value} min={min} max={max} onChange={(e) => onChange(e.target.value)} />
+   );
+@@ -294,6 +338,16 @@ export function EmployeeDetail() {
+ 
+       {/* tabs + panel */}
+       <div className="ad-tabwrap">
++        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
++          <button
++            className="bibo-btn bibo-btn--secondary"
++            onClick={exportAllReports}
++            disabled={loading || !activity || !keystrokes || !visits}
++          >
++            <span style={{ display: "inline-flex", lineHeight: 0 }}>{IconDownload}</span>
++            <span>Export all reports</span>
++          </button>
++        </div>
+         <div className="bibo-tabs bibo-tabs--pill" role="tablist">
+           {TABS.map((key) => (
+             <button
+-- 
+2.51.1
+
