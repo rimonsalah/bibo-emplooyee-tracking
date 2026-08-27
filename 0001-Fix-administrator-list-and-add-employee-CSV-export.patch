@@ -1,0 +1,92 @@
+From fba2d695b2e50a12cb4c8a4c3376475b17bee2e1 Mon Sep 17 00:00:00 2001
+From: Codex <codex@local>
+Date: Thu, 27 Aug 2026 12:36:23 -0500
+Subject: [PATCH] Fix administrator list and add employee CSV export
+
+---
+ apps/backend/internal/store/owner.go   |  4 +--
+ apps/web-admin/src/pages/Employees.tsx | 35 ++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+), 2 deletions(-)
+
+diff --git a/apps/backend/internal/store/owner.go b/apps/backend/internal/store/owner.go
+index 93d9f5a..7bf85ab 100644
+--- a/apps/backend/internal/store/owner.go
++++ b/apps/backend/internal/store/owner.go
+@@ -213,12 +213,12 @@ type Administrator struct {
+ func (s *Store) ListAdministrators(ctx context.Context, businessID string) ([]Administrator, error) {
+ 	rows, err := s.pool.Query(ctx, `
+ 		SELECT u.id, COALESCE(u.email, ''), COALESCE(u.username, ''), u.display_name,
+-		       u.id = b.owner_user_id AS primary
++		       u.id = b.owner_user_id AS is_primary
+ 		  FROM memberships m
+ 		  JOIN users u ON u.id = m.user_id
+ 		  JOIN businesses b ON b.id = m.business_id
+ 		 WHERE m.business_id = $1 AND m.role = 'owner'
+-		 ORDER BY primary DESC, u.display_name`, businessID)
++		 ORDER BY is_primary DESC, u.display_name`, businessID)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+diff --git a/apps/web-admin/src/pages/Employees.tsx b/apps/web-admin/src/pages/Employees.tsx
+index fd6b155..e0f4217 100644
+--- a/apps/web-admin/src/pages/Employees.tsx
++++ b/apps/web-admin/src/pages/Employees.tsx
+@@ -25,6 +25,13 @@ const IconBuilding = svg(<><path d="M10 12h4" /><path d="M10 8h4" /><path d="M14
+ const IconClose = svg(<><path d="M18 6 6 18M6 6l12 12" /></>);
+ const IconHouse = svg(<><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></>);
+ const IconDices = svg(<><rect width="12" height="12" x="2" y="10" rx="2" ry="2" /><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6" /><path d="M6 18h.01" /><path d="M10 14h.01" /><path d="M15 6h.01" /><path d="M18 9h.01" /></>);
++const IconDownload = svg(<><path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" /></>);
++
++function csvCell(value: string) {
++  // Prevent spreadsheet formula execution when a CSV is opened in Excel.
++  const safe = /^[=+\-@]/.test(value) ? `'${value}` : value;
++  return `"${safe.replace(/"/g, '""')}"`;
++}
+ 
+ /** Local strong temp-password generator (mirrors the wizard's). */
+ function genTempPassword(): string {
+@@ -100,6 +107,30 @@ export function Employees() {
+ 
+   const hasBusiness = businesses.length > 0;
+ 
++  function exportEmployees() {
++    if (!selected || employees.length === 0) return;
++    const rows = [
++      ["Employee name", "Email", "Username", "Workspace", "Exported at"],
++      ...employees.map(employee => [
++        employee.display_name,
++        employee.email || "",
++        employee.username || "",
++        selected.name,
++        new Date().toLocaleString(),
++      ]),
++    ];
++    const csv = `\uFEFF${rows.map(row => row.map(csvCell).join(",")).join("\r\n")}`;
++    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
++    const href = URL.createObjectURL(blob);
++    const link = document.createElement("a");
++    link.href = href;
++    link.download = `${selected.name.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "workspace"}-employees-${new Date().toISOString().slice(0, 10)}.csv`;
++    document.body.appendChild(link);
++    link.click();
++    link.remove();
++    URL.revokeObjectURL(href);
++  }
++
+   return (
+     <div className="ad-wrap" style={{ paddingBottom: 32 }}>
+       <div className="ad-pagehead">
+@@ -112,6 +143,10 @@ export function Employees() {
+           )}
+         </div>
+         <div className="ad-pagehead__actions">
++          <button className="bibo-btn bibo-btn--secondary" onClick={exportEmployees} disabled={!selected || employees.length === 0}>
++            <span style={{ display: "inline-flex", lineHeight: 0 }}>{IconDownload}</span>
++            <span>Export CSV</span>
++          </button>
+           <button className="bibo-btn bibo-btn--secondary" onClick={() => setShowBiz(true)}>
+             <span style={{ display: "inline-flex", lineHeight: 0 }}>{IconPlus}</span>
+             <span>{t("employees.newOrg", { org: terms.org })}</span>
+-- 
+2.51.1
+
