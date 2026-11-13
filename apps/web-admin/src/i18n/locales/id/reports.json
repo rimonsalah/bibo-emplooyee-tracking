@@ -35,6 +35,8 @@
     "title": "Tangkapan layar",
     "prev": "Screenshot sebelumnya",
     "next": "Screenshot berikutnya",
-    "close": "Tutup"
+    "close": "Tutup",
+    "showing": "Menampilkan {{shown}} dari {{total}}",
+    "loadMore": "Muat {{count}} lagi"
   }
 }

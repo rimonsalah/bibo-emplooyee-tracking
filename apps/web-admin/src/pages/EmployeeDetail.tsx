@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -28,6 +28,8 @@ import { useDetailHeader } from "../detailHeader";
 
 type Tab = "activity" | "keystrokes" | "browser" | "screenshots";
 const TABS: Tab[] = ["activity", "keystrokes", "browser", "screenshots"];
+// Screenshots per request (backend caps at 200). More load on demand.
+const SHOTS_PAGE = 60;
 
 // ── inline icons (no icon dependency in web-admin) ───────────────────
 const svg = (children: ReactNode) => (
@@ -41,12 +43,6 @@ const IconClock = svg(<><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /
 const IconAppWindow = svg(<><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M10 4v4" /><path d="M2 8h20" /><path d="M6 4v4" /></>);
 const IconKeyboard = svg(<><path d="M10 8h.01" /><path d="M12 12h.01" /><path d="M14 8h.01" /><path d="M16 12h.01" /><path d="M18 8h.01" /><path d="M6 8h.01" /><path d="M7 16h10" /><path d="M8 12h.01" /><rect width="20" height="16" x="2" y="4" rx="2" /></>);
 const IconCamera = svg(<><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /><circle cx="12" cy="13" r="3" /></>);
-const TrendUp = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
-    <path d="M7 17 17 7M9 7h8v8" />
-  </svg>
-);
-
 const initials = (name: string) =>
   name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join("") || "?";
 
@@ -60,15 +56,16 @@ function memberStatus(lastSeen: number | null): Status {
 }
 
 // ── detail stat card (no sparkline — matches the detail layout) ──────
+// No trend badge: there is no period-over-period data for a member yet, and a
+// made-up "+12%" is worse than none. Add a real `delta` once the API has it.
 function StatCard(props: {
   icon: ReactNode;
   label: string;
   value: ReactNode;
   focal?: boolean;
-  delta?: string;
   sub?: string;
 }) {
-  const { icon, label, value, focal, delta, sub } = props;
+  const { icon, label, value, focal, sub } = props;
   return (
     <div className={`bibo-card ${focal ? "bibo-card--focal" : "bibo-card--default"} ad-cardpad`}>
       <div className={`bibo-stat${focal ? " bibo-stat--focal" : ""}`}>
@@ -78,13 +75,7 @@ function StatCard(props: {
         </div>
         <div className="bibo-stat__value">{value}</div>
         <div className="bibo-stat__foot">
-          {delta && (
-            <span className="bibo-stat__delta bibo-stat__delta--up">
-              {TrendUp}
-              {delta}
-            </span>
-          )}
-          {sub && <span className="bibo-stat__sub">{sub}</span>}
+          {sub &&<span className="bibo-stat__sub">{sub}</span>}
         </div>
       </div>
     </div>
@@ -114,6 +105,11 @@ export function EmployeeDetail() {
   const [keystrokes, setKeystrokes] = useState<KeystrokeBucket[] | null>(null);
   const [visits, setVisits] = useState<BrowserVisit[] | null>(null);
   const [shots, setShots] = useState<ScreenshotMeta[] | null>(null);
+  // True total for the range (the API pages screenshots); null until loaded.
+  const [shotsTotal, setShotsTotal] = useState<number | null>(null);
+  const [loadingMoreShots, setLoadingMoreShots] = useState(false);
+  // Unix bounds of the currently loaded range, so "load more" pages the same window.
+  const rangeRef = useRef<{ from: number; to: number } | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -143,17 +139,19 @@ export function EmployeeDetail() {
     }
     setLoading(true);
     setError(null);
+    rangeRef.current = { from: f, to: to2 };
     try {
       const [a, k, b, s] = await Promise.all([
         reportActivity(id, f, to2),
         reportKeystrokes(id, f, to2),
         reportBrowser(id, f, to2),
-        reportScreenshots(id, f, to2),
+        reportScreenshots(id, f, to2, SHOTS_PAGE),
       ]);
       setActivity(a);
       setKeystrokes(k.buckets);
       setVisits(b.visits);
       setShots(s.screenshots);
+      setShotsTotal(s.total ?? s.screenshots.length);
     } catch {
       setError(t("detail.errorRange"));
     } finally {
@@ -165,18 +163,46 @@ export function EmployeeDetail() {
     load();
   }, [load]);
 
+  // Next page of screenshots for the same range, appended to the gallery.
+  const loadMoreShots = useCallback(async () => {
+    const range = rangeRef.current;
+    if (!id || !range || !shots || loadingMoreShots) return;
+    setLoadingMoreShots(true);
+    try {
+      const s = await reportScreenshots(id, range.from, range.to, SHOTS_PAGE, shots.length);
+      // Ignore a late page if the range changed while it was in flight.
+      if (rangeRef.current !== range) return;
+      setShots((cur) => {
+        const seen = new Set((cur ?? []).map((x) => x.client_uuid));
+        return [...(cur ?? []), ...s.screenshots.filter((x) => !seen.has(x.client_uuid))];
+      });
+      if (s.total != null) setShotsTotal(s.total);
+    } catch {
+      // Keep what's already shown; the "load more" button stays for a retry.
+    } finally {
+      setLoadingMoreShots(false);
+    }
+  }, [id, shots, loadingMoreShots]);
+
   const today = isoDate(new Date());
 
   // Summary stats for the selected day/range, derived from the loaded data.
   const activeS = activity?.breakdown.reduce((sum, b) => sum + b.duration_s, 0) ?? 0;
-  const topApp = activity?.breakdown[0]?.app_name ?? "—";
-  const topAppS = activity?.breakdown[0]?.duration_s ?? 0;
+  // The API doesn't promise breakdown order — pick the largest explicitly.
+  const top = activity?.breakdown.reduce<(typeof activity.breakdown)[number] | null>(
+    (best, b) => (!best || b.duration_s > best.duration_s ? b : best),
+    null,
+  );
+  const topApp = top?.app_name ?? "—";
+  const topAppS = top?.duration_s ?? 0;
   const keypresses = keystrokes?.reduce((sum, b) => sum + b.count, 0) ?? 0;
-  // Top app's share of active time (real) — shown as the "focus" chip.
+  // Top app's share of active time (real).
   const topShare = activeS > 0 ? Math.round((topAppS / activeS) * 100) : 0;
+  const periodLabel = mode === "day" ? t("detail.singleDay") : t("detail.dateRange");
 
   const name = employee?.display_name ?? terms.one;
-  const isSelf = employee?.role === "owner" || (!!employee && employee.id === user?.id);
+  // Only the signed-in user is "You" — other administrators also have role owner.
+  const isSelf = !!employee && employee.id === user?.id;
   const status = memberStatus(employee?.last_seen ?? null);
 
   const dateInput = (value: string, onChange: (v: string) => void, min?: string, max?: string) => (
@@ -266,29 +292,25 @@ export function EmployeeDetail() {
           icon={IconClock}
           label={mode === "day" ? t("detail.summary.activeTime") : t("detail.summary.activeTimeRange")}
           value={fmtDuration(activeS)}
-          delta="12%" /* PLACEHOLDER — no period-over-period data yet (matches Dashboard) */
-          sub={mode === "day" ? t("detail.singleDay") : t("detail.dateRange")}
+          sub={periodLabel}
         />
         <StatCard
           icon={IconAppWindow}
           label={t("detail.summary.topApp")}
           value={topApp}
-          delta={`${topShare}%`}
-          sub={t("dashboard.statFocus")}
+          sub={top ? `${topShare}% · ${fmtDuration(topAppS)}` : periodLabel}
         />
         <StatCard
           icon={IconKeyboard}
           label={t("detail.summary.keypresses")}
           value={keypresses.toLocaleString()}
-          delta="8%" /* PLACEHOLDER pending backend trend data */
-          sub={t("dashboard.vsYesterday")}
+          sub={periodLabel}
         />
         <StatCard
           icon={IconCamera}
           label={t("detail.summary.screenshots")}
-          value={(shots?.length ?? 0).toLocaleString()}
-          delta="+4" /* PLACEHOLDER pending backend trend data */
-          sub={t("dashboard.todayLabel")}
+          value={(shotsTotal ?? shots?.length ?? 0).toLocaleString()}
+          sub={periodLabel}
         />
       </div>
 
@@ -323,7 +345,16 @@ export function EmployeeDetail() {
                     {tab === "keystrokes" &&
                       (keystrokes ? <KeystrokePanel buckets={keystrokes} /> : <Spinner />)}
                     {tab === "screenshots" &&
-                      (shots ? <ScreenshotGallery shots={shots} /> : <Spinner />)}
+                      (shots ? (
+                        <ScreenshotGallery
+                          shots={shots}
+                          total={shotsTotal ?? shots.length}
+                          loadingMore={loadingMoreShots}
+                          onLoadMore={loadMoreShots}
+                        />
+                      ) : (
+                        <Spinner />
+                      ))}
                   </div>
                 )}
               </>

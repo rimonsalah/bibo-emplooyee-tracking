@@ -35,6 +35,8 @@
     "title": "已捕获的截图",
     "prev": "上一张截图",
     "next": "下一张截图",
-    "close": "关闭"
+    "close": "关闭",
+    "showing": "显示 {{shown}} / {{total}}",
+    "loadMore": "再加载 {{count}} 张"
   }
 }

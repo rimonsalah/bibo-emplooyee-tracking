@@ -157,6 +157,8 @@ export interface ScreenshotMeta {
 
 export interface ScreenshotsResponse {
   screenshots: ScreenshotMeta[];
+  /** Total screenshots in the range (all pages). Older backends omit it. */
+  total?: number;
   limit: number;
   offset: number;
 }

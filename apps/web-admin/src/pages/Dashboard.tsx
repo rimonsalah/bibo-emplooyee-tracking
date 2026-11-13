@@ -257,7 +257,7 @@ export function Dashboard() {
               </thead>
               <tbody>
                 {rows.map((e, i) => {
-                  const isSelf = e.role === "owner" || e.id === user?.id;
+                  const isSelf = e.id === user?.id;
                   const status = memberStatus(e.last_seen);
                   const pal = AVATAR_PALETTE[i % AVATAR_PALETTE.length];
                   const focus = e.focus_pct_today;

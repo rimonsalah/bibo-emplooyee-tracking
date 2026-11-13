@@ -35,6 +35,8 @@
     "title": "Captured screenshots",
     "prev": "Previous screenshot",
     "next": "Next screenshot",
-    "close": "Close"
+    "close": "Close",
+    "showing": "Showing {{shown}} of {{total}}",
+    "loadMore": "Load {{count}} more"
   }
 }

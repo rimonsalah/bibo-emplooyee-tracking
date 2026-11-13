@@ -185,22 +185,52 @@ function Lightbox({
   );
 }
 
-export function ScreenshotGallery({ shots }: { shots: ScreenshotMeta[] }) {
+export function ScreenshotGallery({
+  shots,
+  total = shots.length,
+  loadingMore = false,
+  onLoadMore,
+}: {
+  shots: ScreenshotMeta[];
+  /** Total in the range across all pages (the API pages screenshots). */
+  total?: number;
+  loadingMore?: boolean;
+  onLoadMore?: () => void;
+}) {
   const { t } = useTranslation("reports");
   const [active, setActive] = useState<number | null>(null);
 
   if (shots.length === 0) return <Empty>{t("screenshots.empty")}</Empty>;
 
+  const remaining = Math.max(0, total - shots.length);
+
   return (
     <>
       <div className="ad-panelhead">
         <div className="ad-paneltitle">{t("screenshots.title")}</div>
+        {total > shots.length && (
+          <span className="muted num">
+            {t("screenshots.showing", { shown: shots.length, total })}
+          </span>
+        )}
       </div>
       <div className="ad-gallery">
         {shots.map((s, i) => (
           <Shot key={s.client_uuid} meta={s as ShotMeta} onOpen={() => setActive(i)} />
         ))}
       </div>
+      {remaining > 0 && onLoadMore && (
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
+          <button
+            type="button"
+            className="bibo-btn bibo-btn--secondary"
+            disabled={loadingMore}
+            onClick={onLoadMore}
+          >
+            {loadingMore ? t("screenshots.loading") : t("screenshots.loadMore", { count: remaining })}
+          </button>
+        </div>
+      )}
       {active != null && (
         <Lightbox shots={shots} index={active} onIndex={setActive} onClose={() => setActive(null)} />
       )}

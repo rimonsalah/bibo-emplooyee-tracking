@@ -191,5 +191,5 @@ export function demoScreenshots(employeeId: string): ScreenshotsResponse {
     display_id: 0,
     app: SHOT_APPS[i % SHOT_APPS.length],
   }));
-  return { screenshots, limit: 60, offset: 0 };
+  return { screenshots, total: screenshots.length, limit: 60, offset: 0 };
 }

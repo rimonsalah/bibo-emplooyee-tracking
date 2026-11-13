@@ -255,6 +255,17 @@ func (s *Store) ScreenshotsReport(ctx context.Context, employeeID, ownerID strin
 	return out, rows.Err()
 }
 
+// ScreenshotsCount returns how many screenshots fall in the range (same scope as
+// ScreenshotsReport), so the UI can show a true total and page through them.
+func (s *Store) ScreenshotsCount(ctx context.Context, employeeID, ownerID string, from, to int64) (int, error) {
+	var n int
+	err := s.pool.QueryRow(ctx,
+		`SELECT count(*) FROM screenshots
+		  WHERE user_id = $1 AND `+ownedFilter+` AND ts >= $3 AND ts < $4`,
+		employeeID, ownerID, from, to).Scan(&n)
+	return n, err
+}
+
 // ScreenshotPathForOwner returns the stored file path for a screenshot the caller is
 // authorized to view (it belongs to a business they own). ErrNotFound otherwise — we
 // don't distinguish "missing" from "not yours", to avoid leaking existence.

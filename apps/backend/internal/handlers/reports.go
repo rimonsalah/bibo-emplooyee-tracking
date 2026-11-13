@@ -109,7 +109,12 @@ func (h *ReportsHandler) Screenshots(c *gin.Context) {
 		serverError(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"screenshots": shots, "limit": limit, "offset": offset})
+	total, err := h.store.ScreenshotsCount(c.Request.Context(), empID, ownerID, from, to)
+	if err != nil {
+		serverError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"screenshots": shots, "total": total, "limit": limit, "offset": offset})
 }
 
 // ScreenshotImage streams a stored screenshot if the caller owns the business it
