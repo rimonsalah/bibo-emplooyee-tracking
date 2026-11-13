@@ -8,31 +8,7 @@ import { memberTerms } from "../terms";
 import { DetailHeaderContext } from "../detailHeader";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Notice } from "./ui";
-
-/** Brand mark — violet gradient tile with the pulse glyph (matches the auth logo). */
-function RailLogo() {
-  return (
-    <span className="ad-rail__logo" aria-label="BiBoTracking">
-      <svg viewBox="0 0 48 48" role="img" aria-label="BiBoTracking">
-        <defs>
-          <linearGradient id="biboRailGrad" x1="6" y1="4" x2="42" y2="46" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor="#a99df8" />
-            <stop offset="1" stopColor="#6c5ce7" />
-          </linearGradient>
-        </defs>
-        <rect x="0" y="0" width="48" height="48" rx="17" fill="url(#biboRailGrad)" />
-        <path
-          d="M12 24h6l3 8 6-16 3 8h6"
-          fill="none"
-          stroke="#fff"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </span>
-  );
-}
+import { KairoMark } from "./Brand";
 
 /** Shared lucide-style icon frame (24×24, stroke = currentColor). */
 function RailIcon({ children }: { children: ReactNode }) {
@@ -310,7 +286,9 @@ export function AppShell() {
   return (
     <div className="app">
       <aside className="ad-rail">
-        <RailLogo />
+        <span className="ad-rail__logo">
+          <KairoMark size={36} />
+        </span>
 
         <nav className="ad-rail__nav">
           {NAV.map((n) => (

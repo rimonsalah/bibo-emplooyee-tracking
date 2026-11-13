@@ -6,33 +6,9 @@ import { ApiError } from "../api/types";
 import { useAuth } from "./AuthContext";
 import { Notice } from "../components/ui";
 import { AuthLayout } from "./AuthLayout";
+import { KairoMark } from "../components/Brand";
 
 const DOWNLOAD_URL = import.meta.env.VITE_DOWNLOAD_URL || "/";
-
-/** Brand mark shown inside the card — pulse/activity glyph on a violet gradient tile. */
-function LogoMark() {
-  return (
-    <span className="ad-login__logo" aria-hidden>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="BiBoTracking">
-        <defs>
-          <linearGradient id="biboLogoGrad" x1="6" y1="4" x2="42" y2="46" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor="#9a90f7" />
-            <stop offset="1" stopColor="#6157e6" />
-          </linearGradient>
-        </defs>
-        <rect x="0" y="0" width="48" height="48" rx="15" fill="url(#biboLogoGrad)" />
-        <path
-          d="M12 24h6l3 8 6-16 3 8h6"
-          fill="none"
-          stroke="#fff"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </span>
-  );
-}
 
 function AtSignIcon() {
   return (
@@ -98,7 +74,9 @@ export function SignIn() {
   return (
     <AuthLayout bare hideLockup>
       <div className="ad-loginbox">
-        <LogoMark />
+        <span className="ad-login__logo">
+          <KairoMark size={52} />
+        </span>
         <h1 className="ad-login__title">{t("signIn.title")}</h1>
         <p className="ad-login__sub">{t("signIn.subtitle")}</p>
 

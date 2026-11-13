@@ -1,32 +1,35 @@
-/* ctracking — semantic design tokens (see docs/07-ui-design.md) */
+/* Kairo — semantic design tokens (desktop). Midnight + lime, dark-first.
+   --accent is used for both fills and text: olive in light (white text on it),
+   lime in dark (navy text on it) — always pair a fill with --on-accent. */
 
 :root,
 :root[data-theme="light"] {
   --bg: #ffffff;
-  --bg-subtle: #f1f2f6;
-  --bg-inset: #f6f7fa;
-  --border: #e8e8ef;
-  --border-subtle: rgba(20, 22, 27, 0.07);
-  --text: #1a1a22;
-  --text-muted: #6b6b78;
-  --accent: #6c5ce7;
-  --accent-weak: #ece9fd;
+  --bg-subtle: #f1f3f8;
+  --bg-inset: #f5f7fb;
+  --border: #e1e5ee;
+  --border-subtle: rgba(11, 16, 32, 0.07);
+  --text: #0b1020;
+  --text-muted: #5a6478;
+  --accent: #4d7c0f;
+  --accent-weak: #eef8d2;
+  --on-accent: #ffffff;
   --danger: #c0392b;
   --success: #2e7d55;
   --warn: #b8860b;
-  /* data-viz palette (Today's timeline): one hue per app, never a rainbow per
-     segment. Shared across light/dark (vivid on both). */
-  --data-lavender: #8b7cf0;
+  /* data-viz palette (Today's timeline): one hue per app. */
+  --data-lavender: #84cc16;
   --data-mint: #34d399;
   --data-sky: #38bdf8;
   --data-amber: #f5b13c;
   --data-teal: #2dd4bf;
   --data-rose: #fb7185;
-  /* fallback so shared tray/.welcome components that reference --brand still work
-     outside the .welcome scope (where --brand is the purple accent) */
-  --brand: var(--accent);
+  /* brand fill (welcome surfaces, tray): lime with navy text in both themes */
+  --brand: #c6f432;
+  --on-brand: #0b1020;
+  --font-display: "Space Grotesk Variable", "Manrope Variable", system-ui, sans-serif;
 
-  --radius: 6px;
+  --radius: 10px;
   --sp-1: 4px;
   --sp-2: 8px;
   --sp-3: 12px;
@@ -39,28 +42,29 @@
   --fz-md: 16px;
   --fz-lg: 22px;
 
-  /* Clean, flat surfaces (light = all white; dark below).
-     The bold mesh gradient was removed — surfaces are opaque, not glass. */
-  --app-base: #ffffff;
+  --app-base: #f3f5f9;
   --surface: #ffffff;
   --surface-strong: #ffffff;
 }
 
 :root[data-theme="dark"] {
-  --bg: #14161f;
-  --bg-subtle: #191b24;
-  --bg-inset: #1c1e28;
-  --border: #252833;
-  --text: #e8e8f0;
-  --text-muted: #9696a6;
-  --accent: #8b7cf0;
-  --accent-weak: #2a2540;
-  --danger: #e06a5c;
-  --success: #5fb58a;
-  --warn: #d6a93b;
-  --app-base: #0a0c11;
-  --surface: #14161f;
-  --surface-strong: #14161f;
+  --bg: #121a2e;
+  --bg-subtle: #0e1528;
+  --bg-inset: #16203a;
+  --border: #26304a;
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --text: #e8ecf5;
+  --text-muted: #8b95ad;
+  --accent: #c6f432;
+  --accent-weak: rgba(198, 244, 50, 0.14);
+  --on-accent: #0b1020;
+  --danger: #f08070;
+  --success: #5fd08f;
+  --warn: #f5c451;
+  --data-lavender: #c6f432;
+  --app-base: #0b1020;
+  --surface: #121a2e;
+  --surface-strong: #121a2e;
 }
 
 * {
@@ -207,8 +211,9 @@ body {
   flex: none;
   display: grid;
   place-items: center;
-  background: linear-gradient(150deg, #8170f2, #6c5ce7);
-  box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+  background: transparent;
+  overflow: hidden;
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--brand) 30%, transparent);
 }
 .brand-logo svg {
   width: 13px;
@@ -271,13 +276,13 @@ body {
   background: var(--bg-inset);
   color: var(--text);
 }
-/* active item: solid purple gradient pill with white text + icon (matches the mock) */
+/* active item: solid lime pill with navy text + icon */
 .nav-item.active,
 .nav-item.active:hover {
-  background: linear-gradient(135deg, #8170f2, #6c5ce7);
-  color: #fff;
+  background: var(--brand);
+  color: var(--on-brand);
   font-weight: 600;
-  box-shadow: 0 8px 18px rgba(108, 92, 231, 0.32);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--brand) 32%, transparent);
 }
 
 .main {
@@ -376,7 +381,7 @@ body {
 .btn-primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 .btn-primary:hover {
   filter: brightness(1.05);
@@ -758,13 +763,13 @@ body {
   flex: none;
   display: grid;
   place-items: center;
-  background: #f4f2fe;
-  color: #5b4bd6;
+  background: var(--accent-weak);
+  color: var(--accent);
 }
-/* dark: keep the light lavender icon tile (#f4f2fe) with the deep-purple glyph */
+/* dark: keep the light lavender icon tile (var(--accent-weak)) with the deep-purple glyph */
 :root[data-theme="dark"] .bibo-stat__icon {
-  background: #f4f2fe;
-  color: #5b4bd6;
+  background: var(--accent-weak);
+  color: var(--accent);
 }
 .bibo-stat__icon svg {
   width: 18px;
@@ -845,7 +850,7 @@ body {
 /* dark: the hero card is near-black with a faint visible outline so it stands out */
 :root[data-theme="dark"] .bibo-stat.is-focal {
   background: #0a0d11;
-  border-color: #8b7df652;
+  border-color: var(--brand)52;
 }
 .bibo-stat.is-focal .bibo-stat__icon {
   background: rgba(255, 255, 255, 0.12);
@@ -1141,7 +1146,7 @@ td {
 .bb-act-slot.is-active {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 .bb-note {
   display: flex;
@@ -1524,7 +1529,7 @@ td {
 .bibo-btn--primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 .bibo-btn--primary:hover {
   filter: brightness(1.07);
@@ -1635,10 +1640,10 @@ td {
 }
 /* Soft brand-tinted drop shadow on the "Capture now" button. */
 .bb-shots-bar .bibo-btn--primary {
-  box-shadow: 0 6px 16px rgba(108, 92, 231, 0.35);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--brand) 35%, transparent);
 }
 .bb-shots-bar .bibo-btn--primary:hover {
-  box-shadow: 0 8px 22px rgba(108, 92, 231, 0.45);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--brand) 45%, transparent);
 }
 .bb-shots-bar .bibo-btn svg {
   width: 22px;
@@ -1646,10 +1651,10 @@ td {
 }
 /* Dark mode: brand-purple "Capture now" button. */
 :root[data-theme="dark"] .bb-shots-bar .bibo-btn--primary {
-  background: #6c5ce7;
-  border-color: #6c5ce7;
-  color: #fff;
-  box-shadow: 0 6px 20px rgba(108, 92, 231, 0.5);
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--on-brand);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--brand) 50%, transparent);
 }
 .bibo-btn:disabled {
   opacity: 0.6;
@@ -2442,7 +2447,7 @@ td {
    Scoped under .welcome so it doesn't touch other screens. Themes via tokens.
    ========================================================================= */
 .welcome {
-  --brand: #6c5ce7;
+  --brand: #c6f432;
   gap: 0;
   /* Force a clean WHITE surface so the welcome always stays light, even when the
      OS / app theme is dark. Keeps the purple brand + the near-black focal
@@ -2457,8 +2462,10 @@ td {
   --surface-strong: #ffffff;
   /* keep brand tint light too, so the language menu's active option doesn't pick
      up the dark-theme --accent-weak on this forced-white surface (BRI-16) */
-  --accent: #6c5ce7;
-  --accent-weak: #ece9fd;
+  /* forced-white surface: olive accent (lime text would be unreadable on white) */
+  --accent: #4d7c0f;
+  --accent-weak: #eef8d2;
+  --on-accent: #ffffff;
   color: var(--text);
   background: #ffffff;
 }
@@ -2467,14 +2474,15 @@ td {
   color: var(--text-muted);
 }
 
-/* purple gradient app-icon tile + white pulse line */
+/* Kairo app-icon tile (the SVG brings its own midnight tile) */
 .welcome .brand-mark {
   width: 56px;
   height: 56px;
   border-radius: 16px;
   display: grid;
   place-items: center;
-  background: linear-gradient(150deg, #8170f2, var(--brand));
+  background: transparent;
+  overflow: hidden;
   box-shadow: 0 12px 26px color-mix(in srgb, var(--brand) 42%, transparent);
   margin-bottom: var(--sp-4);
 }
@@ -2874,7 +2882,7 @@ td {
   font: inherit;
   font-size: 14px;
   font-weight: 700;
-  color: #fff;
+  color: var(--on-brand);
   background: var(--brand);
   border: 1px solid transparent;
   border-radius: 999px;
@@ -2945,7 +2953,7 @@ td {
   color: var(--text);
 }
 
-/* ---- consent ("What BiBoTracking captures"): 2×2 capture cards + focal note ---- */
+/* ---- consent ("What Kairo captures"): 2×2 capture cards + focal note ---- */
 .welcome .capture-grid {
   width: 100%;
   max-width: 560px;
@@ -2994,7 +3002,7 @@ td {
   line-height: 1.45;
 }
 .welcome .cc-purple {
-  --tone: #6c5ce7;
+  --tone: var(--brand);
   --tone-soft: #ece9fe;
 }
 .welcome .cc-blue {
@@ -3311,4 +3319,48 @@ td {
 }
 .welcome .perm-granted.perm-off {
   color: var(--text-muted);
+}
+
+/* =====================================================================
+   Kairo brand layer (desktop) — loaded last.
+   ===================================================================== */
+.brand-logo {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  box-shadow: none;
+}
+.brand-logo svg,
+.welcome .brand-mark svg {
+  width: 100%;
+  height: 100%;
+}
+.welcome .brand-mark {
+  box-shadow: 0 14px 30px -12px color-mix(in srgb, var(--brand) 55%, transparent);
+}
+.brand-name,
+.header h1,
+.login-title,
+.kairo-wordmark {
+  font-family: var(--font-display);
+  letter-spacing: -0.03em;
+}
+.kairo-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--kairo-size, 40px) * 0.3);
+}
+.kairo-mark {
+  display: block;
+  flex: none;
+}
+.kairo-wordmark {
+  font-size: calc(var(--kairo-size, 40px) * 0.72);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text);
+}
+::selection {
+  background: var(--brand);
+  color: var(--on-brand);
 }

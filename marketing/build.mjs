@@ -10,7 +10,8 @@
 //   node marketing/build.mjs staging         # same as above
 //   node marketing/build.mjs production       # production       -> marketing/site-prod/
 //
-// Env overrides (rarely needed): SITE_ENV, SITE_BASE_URL, SITE_GA_ID, SITE_OUT.
+// Env overrides (rarely needed): SITE_ENV, SITE_BASE_URL, SITE_GA_ID, SITE_OUT,
+// SITE_DL_WIN, SITE_DL_MAC, SITE_DL_EXT, SITE_EXT_CHROME, SITE_EXT_EDGE, SITE_EXT_FIREFOX.
 //
 // Note: the in-page language switcher uses ROOT-RELATIVE links (/, /zh/, …) so it works
 // on whatever host serves the files. Only SEO-facing URLs (canonical, og:url, hreflang,
@@ -28,19 +29,22 @@ const SRC = join(ROOT, "src"); // template + i18n sources (not served)
 //  - production renders to marketing/site-prod/ (gitignored, built at deploy time).
 // For a private pre-prod host, don't hard-code it here — override at build time:
 //   SITE_BASE_URL=https://your-host SITE_OUT=site node marketing/build.mjs
+// Kairo: set your public domain in SITE_DOMAIN (or SITE_BASE_URL at build time).
+// Canonical URLs, hreflang and the sitemap are built from it.
+const SITE_DOMAIN = "https://kairo.example.com"; // TODO: your marketing domain
 const ENVS = {
   default: {
-    base: "https://bibotracker.com",
+    base: SITE_DOMAIN,
     ga: "", // no Google Analytics on the committed default build
     out: "site",
   },
   production: {
-    base: "https://bibotracker.com",
-    ga: "G-EKVNL0JY98",
+    base: SITE_DOMAIN,
+    ga: "", // set your own GA4 id via SITE_GA_ID=G-XXXXXXX
     out: "site-prod",
   },
   staging: {
-    base: "https://employeetracking.namnguyen.pro",
+    base: SITE_DOMAIN, // override with SITE_BASE_URL=https://staging.your-domain
     ga: "",
     out: "site-staging",
     noindex: true, // staging must never be crawled/indexed
@@ -55,6 +59,18 @@ const ENV = ENVS[ENV_NAME];
 const BASE = process.env.SITE_BASE_URL || ENV.base;
 const GA_ID = process.env.SITE_GA_ID ?? ENV.ga;
 const SITE = join(ROOT, process.env.SITE_OUT || ENV.out);
+// Download links (Download section, hero, pricing, footer). Defaults are files the
+// backend serves from <STATIC_DIR>/download/. Store listings are optional: when a
+// SITE_EXT_* URL is empty the page offers the extension .zip + "Load unpacked" steps
+// (Firefox shows "coming soon" — it can't install unsigned extensions).
+const DL = {
+  win: process.env.SITE_DL_WIN || "/download/Kairo-Windows-x64-setup.exe",
+  mac: process.env.SITE_DL_MAC || "/download/Kairo-macOS.dmg",
+  ext: process.env.SITE_DL_EXT || "/download/Kairo-extension.zip",
+  chrome: process.env.SITE_EXT_CHROME || "",
+  edge: process.env.SITE_EXT_EDGE || "",
+  firefox: process.env.SITE_EXT_FIREFOX || "",
+};
 const HOST = BASE.replace(/^https?:\/\//, ""); // bare host for the demo browser-bar mockup
 
 // locale code -> { seg: URL path segment ("" = root), bcp47: <html lang>, og: og:locale,
@@ -195,6 +211,12 @@ for (const code of Object.keys(LOCALES)) {
     .split("{{__lang}}").join(LOCALES[code].bcp47)
     .split("{{__base}}").join(BASE)
     .split("{{__host}}").join(HOST)
+    .split("{{__dl_win}}").join(DL.win)
+    .split("{{__dl_mac}}").join(DL.mac)
+    .split("{{__dl_ext}}").join(DL.ext)
+    .split("{{__ext_chrome}}").join(DL.chrome)
+    .split("{{__ext_edge}}").join(DL.edge)
+    .split("{{__ext_firefox}}").join(DL.firefox)
     .split("{{__analytics}}").join(analytics())
     .split("{{__autodetect}}").join(autoDetect(code))
     .split("{{__locale_js}}").join(localeJs(code))

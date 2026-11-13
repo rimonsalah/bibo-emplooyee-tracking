@@ -1,14 +1,19 @@
-# BiBoTracking — project guide
+# Kairo — project guide
 
 Local-first employee/family **time & activity tracking**. A desktop app captures
 activity on each machine and (optionally) syncs to a backend; owners review it in a web
 dashboard. Open-source, self-hostable, positioned as a Hubstaff alternative.
+Fork of the MIT-licensed BiBoTracking (upstream `ngnclht1102/bibo-emplooyee-tracking`).
 
-> **Brand:** display name is **BiBoTracking** (renamed from "BiBoEmployeeTracking", ticket
-> 111 — display only). Build/infra identifiers still use older names: Tauri
-> `productName=employeetrack`, bundle id `com.briannguyen.ctracking`, Go module
-> `ctracking/backend`, DMG `EmployeeTracker-macOS.dmg`, Chrome ext slug `employee-tracker`.
-> Don't "fix" those unless doing an infra rebrand.
+> **Brand (ticket 149):** display name **Kairo**, look = **midnight + lime, dark-first**.
+> Logo master: `brand/kairo-mark.svg` (React copies: `components/Brand.tsx` in web-admin,
+> `src/Brand.tsx` in desktop — keep in sync); icon variants via `brand/build-icons.cjs`.
+> Display font Space Grotesk (fontsource; self-hosted woff2 on marketing). Lime
+> `--brand-500 #C6F432` is a FILL — put `--on-brand` navy text on it; for lime-ish text on
+> light backgrounds use `--accent` (olive `#4d7c0f`). Tauri `productName=Kairo`.
+> Infra identifiers still use older names: bundle id `com.briannguyen.bibotracking`, Go
+> module `ctracking/backend`, extension handshake `app: "employeetrack"`, CSS class
+> prefix `bibo-*`. Don't "fix" those unless doing an infra rebrand.
 
 ## Monorepo layout (pnpm workspace: `apps/*`, `packages/*`)
 - `apps/backend` — Go API + static file server (one binary serves API **and** all static
@@ -49,7 +54,7 @@ dashboard. Open-source, self-hostable, positioned as a Hubstaff alternative.
 - `zh` = Simplified Chinese. Stack: `i18next` + `react-i18next` + browser language detector;
   JSON catalogs per app under `src/i18n/locales/<code>/<namespace>.json`. Persisted in
   `localStorage` (key `locale`); detection: saved → browser → `en`.
-- Brand "BiBoTracking" stays verbatim in all locales. Formatting via `Intl` (`format.ts`).
+- Brand "Kairo" stays verbatim in all locales. Formatting via `Intl` (`format.ts`).
 - **Desktop native:** Rust tray/menu localized via a `tr(locale,key)` table reading
   `settings.locale`; `set_locale` command + `LanguageSwitcher` mirror the choice. Permission
   labels render from the React `permissions.caps.<key>` catalog (Rust strings as fallback).
@@ -77,7 +82,7 @@ dashboard. Open-source, self-hostable, positioned as a Hubstaff alternative.
 
 ## Conventions
 - Tickets: every change is logged in `docs/tickets/NN-*.md` (+ `00-INDEX.md`); QA tickets are
-  interactive (human runs the app). Highest ticket so far: 148.
+  interactive (human runs the app). Highest ticket so far: 149.
 - Verify before claiming done: web/desktop `tsc --noEmit` + `vite build`; backend `go build ./...`;
   Rust `cargo check` (in `apps/desktop/src-tauri`).
 - After backend code changes the `go run` dev server must be **restarted** (no hot reload).

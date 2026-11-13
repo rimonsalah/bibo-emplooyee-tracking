@@ -6,8 +6,8 @@
   {{__autodetect}}
   <title>{{meta.title}}</title>
   <meta name="description" content="{{meta.description}}" />
-  <meta name="keywords" content="BiBoTracking, bibo employee tracking, hubstaff alternative, free hubstaff alternative, open source hubstaff alternative, employee time tracking software, employee monitoring software, macOS time tracking, Windows time tracking, screenshot monitoring software, productivity tracking, self-hosted time tracking, open source employee monitoring, time tracking app for mac, time tracking app for windows, employee monitoring for windows" />
-  <meta name="author" content="BiBoTracking" />
+  <meta name="keywords" content="Kairo, hubstaff alternative, free hubstaff alternative, open source hubstaff alternative, employee time tracking software, employee monitoring software, macOS time tracking, Windows time tracking, screenshot monitoring software, productivity tracking, self-hosted time tracking, open source employee monitoring, time tracking app for mac, time tracking app for windows, employee monitoring for windows" />
+  <meta name="author" content="Kairo" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <meta name="theme-color" content="#2d6cdf" />
   <link rel="canonical" href="{{__base}}/" />
@@ -17,7 +17,7 @@
 
   <!-- Open Graph / social -->
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="BiBoTracking" />
+  <meta property="og:site_name" content="Kairo" />
   <meta property="og:title" content="{{meta.ogTitle}}" />
   <meta property="og:description" content="{{meta.ogDescription}}" />
   <meta property="og:url" content="{{__base}}/" />
@@ -37,13 +37,13 @@
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "BiBoTracking",
+    "name": "Kairo",
     "applicationCategory": "BusinessApplication",
     "applicationSubCategory": "Time Tracking & Employee Monitoring",
     "operatingSystem": "macOS 13+, Windows 10+",
     "description": "{{jsonld.appDescription}}",
     "url": "{{__base}}/",
-    "downloadUrl": "{{__base}}/download/EmployeeTracker-macOS.dmg",
+    "downloadUrl": "{{__base}}/#download",
     "softwareVersion": "1.5.1",
     "offers": [
       { "@type": "Offer", "price": "0", "priceCurrency": "USD", "description": "{{jsonld.offerFree}}" }
@@ -102,8 +102,8 @@
   <nav class="lp-nav" id="nav">
     <div class="lp-nav__in">
       <a class="lp-brand" href="#top">
-        <img src="/assets/mark.svg" alt="BiBoTracking" />
-        <span class="lp-brand__name">Bi<b>Bo</b>Tracking</span>
+        <img src="/assets/mark.svg" alt="Kairo" />
+        <span class="lp-brand__name">Kairo</span>
       </a>
       <div class="lp-nav__menu" id="navmenu">
         <div class="lp-navlinks">
@@ -112,11 +112,12 @@
           <a class="lp-navlink" href="#demo">{{nav.demo}}</a>
           <a class="lp-navlink" href="#how">{{nav.how}}</a>
           <a class="lp-navlink" href="#compare">{{nav.compare}}</a>
+          <a class="lp-navlink" href="#download">{{nav.download}}</a>
           <a class="lp-navlink" href="#pricing">{{nav.pricing}}</a>
         </div>
         <div class="lp-nav__right">
           {{__lang_switcher}}
-          <a class="lp-btn lp-btn--ghost lp-btn--sm lp-nav-github" href="https://github.com/ngnclht1102/bibo-emplooyee-tracking" target="_blank" rel="noopener" aria-label="GitHub repository" title="View source on GitHub">
+          <a class="lp-btn lp-btn--ghost lp-btn--sm lp-nav-github" href="https://github.com/rimonsalah/bibo-emplooyee-tracking" target="_blank" rel="noopener" aria-label="GitHub repository" title="View source on GitHub">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
             <span>GitHub</span>
           </a>
@@ -148,17 +149,17 @@
           {{hero.ledeA}}<strong>{{hero.ledeStrong}}</strong>{{hero.ledeB}}
         </p>
         <div class="lp-hero__ctas">
-          <a class="lp-btn lp-btn--primary lp-btn--lg" href="/download/EmployeeTracker-macOS.dmg" download>
+          <a class="lp-btn lp-btn--primary lp-btn--lg" href="{{__dl_mac}}" download>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg>
             {{hero.downloadMac}}
           </a>
-          <a class="lp-btn lp-btn--secondary lp-btn--lg" href="/download/EmployeeTracker-Windows-x64.msi" download>
+          <a class="lp-btn lp-btn--secondary lp-btn--lg" href="{{__dl_win}}" data-win-dl download>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
             {{hero.downloadWin}}
           </a>
         </div>
         <div class="lp-hero__sub-ctas">
-          <a class="lp-hero__link" href="https://chromewebstore.google.com/detail/employee-tracker/meoifmgllkafmaeckbdambfnoolnilme" target="_blank" rel="noopener">
+          <a class="lp-hero__link" href="#download">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"/></svg>
             {{hero.addChrome}}
           </a>
@@ -311,7 +312,7 @@
           <div class="lp-step__num">2</div>
           <div class="lp-card__t">{{how.step2.h}}</div>
           <div class="lp-card__d">{{how.step2.p}}</div>
-          <a class="lp-card__link" href="https://chromewebstore.google.com/detail/employee-tracker/meoifmgllkafmaeckbdambfnoolnilme" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"/></svg>{{how.step2.link}}</a>
+          <a class="lp-card__link" href="#download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"/></svg>{{how.step2.link}}</a>
         </div>
         <div class="lp-card lp-card--hover reveal">
           <div class="lp-step__num">3</div>
@@ -416,6 +417,64 @@
     </div>
   </section>
 
+  <!-- ===================== DOWNLOAD ===================== -->
+  <section class="lp-section" id="download">
+    <div class="wrap">
+      <div class="lp-head-center reveal">
+        <p class="kicker">{{download.kicker}}</p>
+        <h2 class="lp-h2 center">{{download.title}}</h2>
+        <p class="lp-lead center">{{download.intro}}</p>
+      </div>
+
+      <h3 class="lp-dl__group reveal">{{download.desktopH}}</h3>
+      <div class="lp-dl-grid lp-dl-grid--2">
+        <div class="lp-card lp-dl reveal">
+          <div class="lp-dl__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.5 10.5 4.5v7H3zM11.5 4.4 21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.5zM11.5 12.5H21V21l-9.5-1.4z"/></svg>
+          </div>
+          <div class="lp-dl__name">Windows</div>
+          <div class="lp-dl__sub">{{download.winSub}}</div>
+          <a class="lp-btn lp-btn--primary" href="{{__dl_win}}" data-win-dl download>{{download.winBtn}}</a>
+        </div>
+        <div class="lp-card lp-dl reveal">
+          <div class="lp-dl__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.5-1-2.5-3.9zM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.1-.6 2.8-1.4z"/></svg>
+          </div>
+          <div class="lp-dl__name">macOS</div>
+          <div class="lp-dl__sub">{{download.macSub}}</div>
+          <a class="lp-btn lp-btn--secondary" href="{{__dl_mac}}" download>{{download.macBtn}}</a>
+        </div>
+      </div>
+
+      <h3 class="lp-dl__group reveal">{{download.extH}}</h3>
+      <p class="lp-dl__lede reveal">{{download.extIntro}}</p>
+      <div class="lp-dl-grid lp-dl-grid--4">
+        <div class="lp-card lp-dl reveal" data-ext-store="{{__ext_chrome}}" data-ext-page="chrome://extensions">
+          <div class="lp-dl__name">Chrome</div>
+          <a class="lp-btn lp-btn--primary lp-dl__store" href="{{__ext_chrome}}" target="_blank" rel="noopener">{{download.storeBtn}}</a>
+          <a class="lp-btn lp-btn--secondary lp-dl__zip" href="{{__dl_ext}}" download>{{download.zipBtn}}</a>
+        </div>
+        <div class="lp-card lp-dl reveal" data-ext-store="{{__ext_edge}}" data-ext-page="edge://extensions">
+          <div class="lp-dl__name">Microsoft Edge</div>
+          <a class="lp-btn lp-btn--primary lp-dl__store" href="{{__ext_edge}}" target="_blank" rel="noopener">{{download.storeBtn}}</a>
+          <a class="lp-btn lp-btn--secondary lp-dl__zip" href="{{__dl_ext}}" download>{{download.zipBtn}}</a>
+        </div>
+        <div class="lp-card lp-dl reveal" data-ext-store="{{__ext_chrome}}" data-ext-page="brave://extensions · opera://extensions">
+          <div class="lp-dl__name">Brave · Opera</div>
+          <a class="lp-btn lp-btn--primary lp-dl__store" href="{{__ext_chrome}}" target="_blank" rel="noopener">{{download.storeBtn}}</a>
+          <a class="lp-btn lp-btn--secondary lp-dl__zip" href="{{__dl_ext}}" download>{{download.zipBtn}}</a>
+        </div>
+        <div class="lp-card lp-dl reveal" data-ext-store="{{__ext_firefox}}" data-ext-nozip>
+          <div class="lp-dl__name">Firefox</div>
+          <a class="lp-btn lp-btn--primary lp-dl__store" href="{{__ext_firefox}}" target="_blank" rel="noopener">{{download.storeBtn}}</a>
+          <span class="lp-dl__soon">{{download.firefoxSoon}}</span>
+        </div>
+      </div>
+      <p class="lp-dl__manual reveal" id="dl-manual">{{download.manualSteps}}</p>
+      <p class="lp-dl__note reveal">{{download.note}}</p>
+    </div>
+  </section>
+
   <!-- ===================== PRICING ===================== -->
   <section class="lp-section" id="pricing">
     <div class="wrap">
@@ -436,8 +495,8 @@
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>{{pricing.free.li3}}</li>
           </ul>
           <div class="lp-price__ctas">
-            <a class="lp-btn lp-btn--primary" href="/download/EmployeeTracker-macOS.dmg" download>{{pricing.free.btn}}</a>
-            <a class="lp-btn lp-btn--secondary" href="/download/EmployeeTracker-Windows-x64.msi" download>{{pricing.free.btnWin}}</a>
+            <a class="lp-btn lp-btn--primary" href="{{__dl_mac}}" download>{{pricing.free.btn}}</a>
+            <a class="lp-btn lp-btn--secondary" href="{{__dl_win}}" data-win-dl download>{{pricing.free.btnWin}}</a>
           </div>
         </div>
         <div class="lp-card lp-price reveal">
@@ -450,7 +509,7 @@
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>{{pricing.custom.li3}}</li>
           </ul>
           <div class="lp-price__ctas">
-            <a class="lp-btn lp-btn--secondary" href="https://appt.link/meet-with-brian-nguyen-bibo-founder-rQoJp3Dr/web-conference" target="_blank" rel="noopener">{{pricing.custom.btn}}</a>
+            <a class="lp-btn lp-btn--secondary" href="https://github.com/rimonsalah/bibo-emplooyee-tracking/issues" target="_blank" rel="noopener">{{pricing.custom.btn}}</a>
           </div>
         </div>
       </div>
@@ -483,7 +542,7 @@
         </div>
       </div>
       <div class="lp-oss__foot reveal">
-        <a class="lp-btn lp-btn--secondary lp-btn--lg" href="https://github.com/ngnclht1102/bibo-emplooyee-tracking" target="_blank" rel="noopener">
+        <a class="lp-btn lp-btn--secondary lp-btn--lg" href="https://github.com/rimonsalah/bibo-emplooyee-tracking" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
           {{oss.github}}
         </a>
@@ -498,11 +557,11 @@
         <h2>{{cta.title}}</h2>
         <p>{{cta.intro}}</p>
         <div class="lp-finalcta__ctas">
-          <a class="lp-btn lp-btn--primary lp-btn--lg" href="/download/EmployeeTracker-macOS.dmg" download>
+          <a class="lp-btn lp-btn--primary lp-btn--lg" href="{{__dl_mac}}" download>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg>
             {{cta.downloadMac}}
           </a>
-          <a class="lp-btn lp-btn--secondary lp-btn--lg" href="/download/EmployeeTracker-Windows-x64.msi" download>
+          <a class="lp-btn lp-btn--secondary lp-btn--lg" href="{{__dl_win}}" data-win-dl download>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
             {{cta.downloadWin}}
           </a>
@@ -520,14 +579,14 @@
     <div class="wrap">
       <div class="lp-footer__grid">
         <div class="lp-footer__brand">
-          <a class="lp-brand" href="#top"><img src="/assets/mark.svg" alt="BiBoTracking" /><span class="lp-brand__name">Bi<b>Bo</b>Tracking</span></a>
+          <a class="lp-brand" href="#top"><img src="/assets/mark.svg" alt="Kairo" /><span class="lp-brand__name">Kairo</span></a>
           <p class="lp-footer__tag">{{footer.tagline}}</p>
         </div>
         <div class="lp-footer__col">
           <h4>{{footer.colDownloads}}</h4>
-          <a href="/download/EmployeeTracker-macOS.dmg" download>{{footer.download}}</a>
-          <a href="/download/EmployeeTracker-Windows-x64.msi" download>{{footer.downloadWin}}</a>
-          <a href="https://chromewebstore.google.com/detail/employee-tracker/meoifmgllkafmaeckbdambfnoolnilme" target="_blank" rel="noopener">{{footer.chrome}}</a>
+          <a href="{{__dl_mac}}" download>{{footer.download}}</a>
+          <a href="{{__dl_win}}" data-win-dl download>{{footer.downloadWin}}</a>
+          <a href="#download">{{footer.chrome}}</a>
         </div>
         <div class="lp-footer__col">
           <h4>{{footer.colProduct}}</h4>
@@ -539,15 +598,13 @@
           <h4>{{footer.colResources}}</h4>
           <a href="#oss">{{footer.oss}}</a>
           <a href="/privacy/">{{footer.privacy}}</a>
-          <a href="https://t.me/bibotracker" target="_blank" rel="noopener">{{footer.telegram}}</a>
-          <a href="mailto:brian.nguyen.work@gmail.com">{{footer.contact}}</a>
+          <a href="https://github.com/rimonsalah/bibo-emplooyee-tracking/issues" target="_blank" rel="noopener">{{footer.contact}}</a>
         </div>
       </div>
       <div class="lp-footer__bottom">
         <span>{{footer.copyright}}</span>
         <span class="lp-footer__social">
-          <a href="https://github.com/ngnclht1102/bibo-emplooyee-tracking" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg></a>
-          <a href="https://t.me/bibotracker" target="_blank" rel="noopener" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></a>
+          <a href="https://github.com/rimonsalah/bibo-emplooyee-tracking" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg></a>
         </span>
       </div>
     </div>
@@ -584,7 +641,7 @@
       </ol>
 
       <div class="winmodal-cta">
-        <a class="btn btn-primary btn-lg" id="winmodal-download" href="/download/EmployeeTracker-Windows-x64.msi" download>{{win.cont}}</a>
+        <a class="btn btn-primary btn-lg" id="winmodal-download" href="{{__dl_win}}" download>{{win.cont}}</a>
         <button class="btn btn-ghost" id="winmodal-cancel" type="button">{{win.close}}</button>
       </div>
       <p class="winmodal-foot">{{win.foot}}</p>
@@ -643,12 +700,12 @@
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-    // Windows install notice — intercept .msi downloads to explain the SmartScreen prompt
+    // Windows install notice — intercept installer downloads to explain the SmartScreen prompt
     const winModal = document.getElementById('winmodal');
     if (winModal) {
       const dl = document.getElementById('winmodal-download');
       const closeWin = () => winModal.classList.remove('open');
-      document.querySelectorAll('a[href$=".msi"]:not(#winmodal-download)').forEach(a => {
+      document.querySelectorAll('a[data-win-dl]').forEach(a => {
         a.addEventListener('click', (e) => {
           e.preventDefault();
           dl.href = a.getAttribute('href');
@@ -663,5 +720,30 @@
     }
   </script>
   {{__locale_js}}
+  <script>
+    // Download section: each browser card shows its store listing when one is
+    // configured (SITE_EXT_* at build time); otherwise the .zip + manual steps.
+    (function () {
+      var anyZip = false;
+      document.querySelectorAll('.lp-dl[data-ext-store]').forEach(function (card) {
+        var hasStore = !!card.getAttribute('data-ext-store');
+        var store = card.querySelector('.lp-dl__store');
+        var zip = card.querySelector('.lp-dl__zip');
+        var soon = card.querySelector('.lp-dl__soon');
+        if (store) store.hidden = !hasStore;
+        if (zip) zip.hidden = hasStore;
+        if (soon) soon.hidden = hasStore;
+        if (!hasStore && zip) {
+          anyZip = true;
+          var hint = document.createElement('code');
+          hint.className = 'lp-dl__page';
+          hint.textContent = card.getAttribute('data-ext-page');
+          card.appendChild(hint);
+        }
+      });
+      var manual = document.getElementById('dl-manual');
+      if (manual) manual.hidden = !anyZip;
+    })();
+  </script>
 </body>
 </html>

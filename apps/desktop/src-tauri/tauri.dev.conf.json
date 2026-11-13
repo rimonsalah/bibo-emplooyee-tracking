@@ -1,11 +1,11 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "BiBoTracking Dev",
+  "productName": "Kairo Dev",
   "identifier": "com.briannguyen.bibotrackingdev",
   "app": {
     "windows": [
       {
-        "title": "BiBoTracking [DEV]",
+        "title": "Kairo [DEV]",
         "width": 1040,
         "height": 720,
         "minWidth": 880,

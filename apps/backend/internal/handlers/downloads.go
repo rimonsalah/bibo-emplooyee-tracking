@@ -27,15 +27,27 @@ func NewDownloadsHandler(st *store.Store, staticDir string) *DownloadsHandler {
 // a counted acquisition. Only the canonical downloads count — the NSIS .exe and
 // .app.tar.gz are auto-update artifacts (re-fetched by existing installs) and the
 // latest.json manifest is metadata, so none of those inflate the download totals.
+//
+// Kairo's public downloads are named Kairo-Windows-*.exe (NSIS installer — its
+// self-hosted builds ship no auto-updater artifacts) and Kairo-extension*.zip;
+// other .exe/.zip files stay uncounted.
 func platformFor(name string) string {
+	lower := strings.ToLower(name)
 	switch strings.ToLower(filepath.Ext(name)) {
 	case ".dmg":
 		return "macos"
 	case ".msi":
 		return "windows"
-	default:
-		return ""
+	case ".exe":
+		if strings.HasPrefix(lower, "kairo-windows") {
+			return "windows"
+		}
+	case ".zip":
+		if strings.HasPrefix(lower, "kairo-extension") {
+			return "extension"
+		}
 	}
+	return ""
 }
 
 // Serve streams an installer and increments its download counter. Cache-Control:

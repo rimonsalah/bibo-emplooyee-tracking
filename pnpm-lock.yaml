@@ -38,6 +38,9 @@ importers:
       '@fontsource-variable/manrope':
         specifier: ^5.2.8
         version: 5.2.8
+      '@fontsource-variable/space-grotesk':
+        specifier: 5.2.9
+        version: 5.2.9
       '@sentry/react':
         specifier: ^10.59.0
         version: 10.62.0(react@19.2.7)
@@ -95,6 +98,9 @@ importers:
 
   apps/web-admin:
     dependencies:
+      '@fontsource-variable/space-grotesk':
+        specifier: 5.2.9
+        version: 5.2.9
       '@sentry/react':
         specifier: ^10.59.0
         version: 10.62.0(react@19.2.7)
@@ -518,6 +524,9 @@ packages:
 
   '@fontsource-variable/manrope@5.2.8':
     resolution: {integrity: sha512-nc9lOuCRz73UHnovDE2bwXUdghE2SEOc7Aii0qGe3CLyE03W1a7VnY5Z6euRiapiKbCkGS+eXbY3s/kvWeGeSw==}
+
+  '@fontsource-variable/space-grotesk@5.2.9':
+    resolution: {integrity: sha512-4VnXk51fypXV+2okrmz7s0ckBZWIhvEgSVKNgRKGLxb5wpQZi5xZuzX+MalVwCUh36Gve3uG2vqCVuQkrHccRA==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -1405,6 +1414,8 @@ snapshots:
     optional: true
 
   '@fontsource-variable/manrope@5.2.8': {}
+
+  '@fontsource-variable/space-grotesk@5.2.9': {}
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:

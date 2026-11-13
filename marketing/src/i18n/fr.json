@@ -1,13 +1,13 @@
 {
   "meta": {
-    "title": "BiBoTracking — Alternative gratuite et open source à Hubstaff",
+    "title": "Kairo — Alternative gratuite et open source à Hubstaff",
     "description": "Une alternative gratuite et open source à Hubstaff pour macOS &amp; Windows — suivez le temps par application, les frappes au clavier, les captures d&apos;écran &amp; l&apos;activité du navigateur. Local d&apos;abord, auto-hébergeable, gratuit &amp; open source.",
-    "ogTitle": "BiBoTracking — Alternative gratuite et open source à Hubstaff pour macOS &amp; Windows",
+    "ogTitle": "Kairo — Alternative gratuite et open source à Hubstaff pour macOS &amp; Windows",
     "ogDescription": "Une alternative gratuite et open source à Hubstaff pour macOS & Windows. Temps par application et fenêtre, frappes au clavier, captures d'écran et activité du navigateur — local d'abord et auto-hébergeable. Gratuit &amp; open source.",
-    "ogImageAlt": "BiBoTracking — suivi du temps et de l'activité pour macOS & Windows",
-    "twitterTitle": "BiBoTracking — Alternative gratuite et open source à Hubstaff",
+    "ogImageAlt": "Kairo — suivi du temps et de l'activité pour macOS & Windows",
+    "twitterTitle": "Kairo — Alternative gratuite et open source à Hubstaff",
     "twitterDescription": "Suivi du temps &amp; de l'activité des employés, gratuit, open source et auto-hébergeable pour macOS &amp; Windows. Gratuit &amp; open source.",
-    "twitterImageAlt": "Tableau de bord BiBoTracking"
+    "twitterImageAlt": "Tableau de bord Kairo"
   },
   "jsonld": {
     "appDescription": "Une alternative gratuite et open source à Hubstaff pour macOS & Windows. Suit le temps par application et fenêtre, le nombre de frappes au clavier, des captures d'écran périodiques et l'activité du navigateur — local d'abord et auto-hébergeable.",
@@ -23,22 +23,22 @@
   "faq": {
     "q1": {
       "name": "Existe-t-il une alternative gratuite et open source à Hubstaff ?",
-      "answer": "Oui. BiBoTracking est une alternative gratuite et open source à Hubstaff pour macOS & Windows. Il suit le temps par application et fenêtre, le nombre de frappes au clavier, les captures d'écran et l'activité du navigateur, et il est gratuit & open source — ou auto-hébergez-le gratuitement, pour toujours."
+      "answer": "Oui. Kairo est une alternative gratuite et open source à Hubstaff pour macOS & Windows. Il suit le temps par application et fenêtre, le nombre de frappes au clavier, les captures d'écran et l'activité du navigateur, et il est gratuit & open source — ou auto-hébergez-le gratuitement, pour toujours."
     },
     "q2": {
-      "name": "Combien coûte BiBoTracking ?",
-      "answer": "Tout ce que BiBoTracking propose aujourd'hui est entièrement gratuit, sans facturation par utilisateur. Les captures d'écran sont conservées 30 jours ; toutes les autres données sont conservées pour toujours. Des fonctionnalités payantes optionnelles pourront être ajoutées à l'avenir — toujours de nouvelles capacités, jamais quelque chose qui est gratuit aujourd'hui. Les équipes qui ont besoin d'une rétention plus longue des captures d'écran, d'un support dédié ou de fonctionnalités sur mesure peuvent réserver un appel pour un plan personnalisé. Vous pouvez aussi auto-héberger la version open source gratuitement."
+      "name": "Combien coûte Kairo ?",
+      "answer": "Tout ce que Kairo propose aujourd'hui est entièrement gratuit, sans facturation par utilisateur. Les captures d'écran sont conservées 30 jours ; toutes les autres données sont conservées pour toujours. Des fonctionnalités payantes optionnelles pourront être ajoutées à l'avenir — toujours de nouvelles capacités, jamais quelque chose qui est gratuit aujourd'hui. Les équipes qui ont besoin d'une rétention plus longue des captures d'écran, d'un support dédié ou de fonctionnalités sur mesure peuvent réserver un appel pour un plan personnalisé. Vous pouvez aussi auto-héberger la version open source gratuitement."
     },
     "q3": {
-      "name": "BiBoTracking enregistre-t-il ce que les employés tapent ?",
+      "name": "Kairo enregistre-t-il ce que les employés tapent ?",
       "answer": "Non. Le signal du clavier n'est qu'un comptage des frappes — les touches réelles ne sont jamais lues ni stockées. Toute l'activité est d'abord stockée localement, et la synchronisation vers le tableau de bord est optionnelle et unidirectionnelle."
     },
     "q4": {
-      "name": "Puis-je auto-héberger BiBoTracking ?",
+      "name": "Puis-je auto-héberger Kairo ?",
       "answer": "Oui. Le backend en Go, le tableau de bord web, l'application de bureau (macOS et Windows) et l'extension Chrome sont open source. Un seul binaire Go sert l'API et le tableau de bord, adossé à Postgres, ce qui vous permet d'exécuter toute la stack sur votre propre machine gratuitement."
     },
     "q5": {
-      "name": "BiBoTracking capture-t-il les conversations privées ou les applications bancaires ?",
+      "name": "Kairo capture-t-il les conversations privées ou les applications bancaires ?",
       "answer": "Non — le mode capture confidentiel est activé par défaut. Au lieu d'enregistrer l'écran entier, il ne capture que la fenêtre active, et il ne capture jamais les applications sensibles : une liste d'exclusion intégrée d'applications connues de messagerie, bancaires et de gestion de mots de passe (que les dirigeants peuvent étendre) bloque entièrement la capture tant que ces applications sont au premier plan. Les outils de surveillance traditionnels comme Hubstaff capturent l'écran entier, quel que soit ce qui est visible."
     }
   },
@@ -50,7 +50,8 @@
     "pricing": "Tarifs",
     "signIn": "Se connecter",
     "signUp": "S'inscrire",
-    "personas": "Pour qui"
+    "personas": "Pour qui",
+    "download": "Télécharger"
   },
   "hero": {
     "eyebrow": "L'alternative open source à Hubstaff · macOS &amp; Windows",
@@ -59,12 +60,12 @@
     "headlineC": "",
     "ledeA": "Une alternative ",
     "ledeStrong": "à Hubstaff",
-    "ledeB": ", gratuite et open source, pour macOS &amp; Windows. BiBoTracking mesure\n          le temps actif par application &amp; fenêtre, le volume de frappes, des captures d'écran périodiques et l'activité du navigateur —\n          stockés localement sur chaque ordinateur, et synthétisés pour les dirigeants dans un tableau de bord web épuré.",
+    "ledeB": ", gratuite et open source, pour macOS &amp; Windows. Kairo mesure\n          le temps actif par application &amp; fenêtre, le volume de frappes, des captures d'écran périodiques et l'activité du navigateur —\n          stockés localement sur chaque ordinateur, et synthétisés pour les dirigeants dans un tableau de bord web épuré.",
     "downloadMac": "Télécharger pour macOS",
-    "addChrome": "Ajouter à Chrome",
+    "addChrome": "Obtenir l’extension de navigateur",
     "signUp": "S'inscrire",
     "note": "Gratuit &amp; open source · auto-hébergeable · macOS&nbsp;universel (Apple&nbsp;Silicon&nbsp;+&nbsp;Intel) &amp; Windows&nbsp;10+.",
-    "dashboardAlt": "Tableau de bord du bureau BiBoTracking affichant le temps actif, l'application principale, les frappes et les captures d'écran",
+    "dashboardAlt": "Tableau de bord du bureau Kairo affichant le temps actif, l'application principale, les frappes et les captures d'écran",
     "activeToday": "Actifs aujourd'hui",
     "downloadWin": "Télécharger pour Windows"
   },
@@ -119,12 +120,12 @@
     "title": "Opérationnel en trois étapes.",
     "step1": {
       "h": "Installez l'application de bureau",
-      "p": "L'employé installe BiBoTracking sur macOS ou Windows et accorde les autorisations de capture demandées (Accessibilité, Surveillance de la saisie et Enregistrement de l'écran sur macOS). Le statut se met à jour automatiquement dès qu'elles sont accordées."
+      "p": "L'employé installe Kairo sur macOS ou Windows et accorde les autorisations de capture demandées (Accessibilité, Surveillance de la saisie et Enregistrement de l'écran sur macOS). Le statut se met à jour automatiquement dès qu'elles sont accordées."
     },
     "step2": {
       "p": "Optionnel. Enregistre les domaines visités pour afficher la navigation dans les rapports.",
-      "h": "Ajoutez l'extension Chrome",
-      "link": "Obtenez-la sur le Chrome Web Store&nbsp;→"
+      "h": "Ajouter l’extension de navigateur",
+      "link": "Choisir votre navigateur&nbsp;→"
     },
     "step3": {
       "h": "Les dirigeants suivent la synthèse",
@@ -181,7 +182,7 @@
     }
   },
   "compare": {
-    "kicker": "BiBoTracking vs Hubstaff",
+    "kicker": "Kairo vs Hubstaff",
     "title": "Le même suivi essentiel, sans la facture par utilisateur.",
     "intro": "Si vous utilisez Hubstaff pour le suivi des applications, des captures d'écran et de l'activité, vous connaissez déjà le fonctionnement. Voici la version open source, local d'abord — gratuite et open source, et à vous d'auto-héberger.",
     "thFeature": "Fonctionnalité",
@@ -205,7 +206,7 @@
       "browser": "Suivi du navigateur / des URL",
       "dashboard": "Tableau de bord web &amp; rapports pour le dirigeant"
     },
-    "note": "Comparaison basée sur les forfaits et fonctionnalités Hubstaff listés publiquement. « Hubstaff » est une marque déposée de son propriétaire respectif ; BiBoTracking n'est ni affilié à Hubstaff ni approuvé par lui."
+    "note": "Comparaison basée sur les forfaits et fonctionnalités Hubstaff listés publiquement. « Hubstaff » est une marque déposée de son propriétaire respectif ; Kairo n'est ni affilié à Hubstaff ni approuvé par lui."
   },
   "privacy": {
     "kicker": "La confidentialité par conception",
@@ -231,7 +232,7 @@
   "pricing": {
     "kicker": "Tarifs",
     "title": "Gratuit aujourd'hui. Le socle reste gratuit pour toujours.",
-    "intro": "Tout ce que BiBoTracking propose aujourd'hui est entièrement gratuit — pas d'essai, aucun siège à compter, pas de carte bancaire. À mesure que le produit évolue, des fonctionnalités payantes optionnelles pourront être ajoutées pour les équipes qui en veulent plus. Rien de ce que vous utilisez aujourd'hui ne deviendra jamais payant.",
+    "intro": "Tout ce que Kairo propose aujourd'hui est entièrement gratuit — pas d'essai, aucun siège à compter, pas de carte bancaire. À mesure que le produit évolue, des fonctionnalités payantes optionnelles pourront être ajoutées pour les équipes qui en veulent plus. Rien de ce que vous utilisez aujourd'hui ne deviendra jamais payant.",
     "free": {
       "tag": "Socle gratuit",
       "badge": "Gratuit pour toujours",
@@ -257,7 +258,7 @@
   "oss": {
     "kicker": "Open source",
     "title": "Vous ne voulez pas payer ? Hébergez-le vous-même.",
-    "intro": "BiBoTracking est open source — le backend en Go, le tableau de bord web, l'application de bureau (macOS &amp; Windows) et l'extension Chrome\n           sont tous à vous pour les lire, les auditer et les exécuter sur votre propre machine, gratuitement pour toujours. Le\n           service hébergé ici n'est que l'option pratique.",
+    "intro": "Kairo est open source — le backend en Go, le tableau de bord web, l'application de bureau (macOS &amp; Windows) et l'extension Chrome\n           sont tous à vous pour les lire, les auditer et les exécuter sur votre propre machine, gratuitement pour toujours. Le\n           service hébergé ici n'est que l'option pratique.",
     "selfhost": {
       "h": "Auto-hébergez toute la stack",
       "p": "Un seul binaire Go sert l'API et le tableau de bord, adossé à Postgres. Votre infrastructure, vos règles."
@@ -283,13 +284,13 @@
   },
   "footer": {
     "download": "macOS",
-    "chrome": "Extension Chrome",
+    "chrome": "Extension de navigateur",
     "signIn": "Se connecter",
     "pricing": "Tarifs",
     "oss": "Open source",
     "privacy": "Politique de confidentialité",
     "contact": "Contact",
-    "copyright": "© 2026 BiBoTracking · Open source sous licence MIT",
+    "copyright": "© 2026 Kairo · Open source sous licence MIT",
     "github": "GitHub",
     "telegram": "Telegram",
     "downloadWin": "Windows",
@@ -322,10 +323,10 @@
   },
   "win": {
     "title": "Ouvrir l’application sur Windows",
-    "body": "BiBoTracking est une application indépendante, gratuite et open source. Nous n’avons pas acheté de certificat de signature de code Windows coûteux, donc au premier lancement du programme d’installation, Windows peut afficher l’écran « Windows a protégé votre ordinateur ». C’est normal pour une application indépendante — l’application est sûre et chaque ligne de code est publique sur GitHub.",
+    "body": "Kairo est une application indépendante, gratuite et open source. Nous n’avons pas acheté de certificat de signature de code Windows coûteux, donc au premier lancement du programme d’installation, Windows peut afficher l’écran « Windows a protégé votre ordinateur ». C’est normal pour une application indépendante — l’application est sûre et chaque ligne de code est publique sur GitHub.",
     "dlgTitle": "Windows a protégé votre ordinateur",
     "dlgBody": "Microsoft Defender SmartScreen a empêché le démarrage d’une application non reconnue. L’exécution de cette application peut mettre votre PC en danger.",
-    "dlgApp": "Application : EmployeeTracker-Windows-x64.msi",
+    "dlgApp": "Application : Kairo-Windows-x64-setup.exe",
     "dlgPublisher": "Éditeur : Éditeur inconnu",
     "dlgMoreInfo": "Informations complémentaires",
     "dlgRun": "Exécuter quand même",
@@ -334,6 +335,23 @@
     "step2": "Puis cliquez sur <strong>Exécuter quand même</strong> pour lancer l’installation.",
     "cont": "J’ai compris — télécharger maintenant",
     "close": "Annuler",
-    "foot": "Vous préférez vérifier d’abord ? Parcourez tout le code source sur <a href=\"https://github.com/ngnclht1102/bibo-emplooyee-tracking\" target=\"_blank\" rel=\"noopener\">GitHub</a>."
+    "foot": "Vous préférez vérifier d’abord ? Parcourez tout le code source sur <a href=\"https://github.com/rimonsalah/bibo-emplooyee-tracking\" target=\"_blank\" rel=\"noopener\">GitHub</a>."
+  },
+  "download": {
+    "kicker": "Télécharger",
+    "title": "Installer Kairo",
+    "intro": "Installez l’application de bureau sur chaque ordinateur à suivre, puis ajoutez l’extension de navigateur si vous voulez le temps passé sur les sites dans les rapports.",
+    "desktopH": "Application de bureau",
+    "winSub": "Windows 10 et 11 · 64 bits",
+    "winBtn": "Télécharger pour Windows",
+    "macSub": "macOS 13 Ventura ou version ultérieure",
+    "macBtn": "Télécharger pour macOS",
+    "extH": "Extension de navigateur",
+    "extIntro": "Facultatif. Ajoute les sites visités aux rapports. Elle communique uniquement avec l’application Kairo sur le même ordinateur, jamais avec Internet.",
+    "storeBtn": "Installer depuis la boutique",
+    "zipBtn": "Télécharger l’extension (.zip)",
+    "firefoxSoon": "Bientôt sur Firefox Add-ons",
+    "manualSteps": "Installation depuis le .zip : décompressez-le, ouvrez la page des extensions de votre navigateur (indiquée sur chaque carte), activez le mode développeur, puis choisissez « Charger l’extension non empaquetée » et sélectionnez le dossier décompressé.",
+    "note": "Après l’installation, connectez-vous avec les identifiants fournis par votre administrateur."
   }
 }

@@ -1,13 +1,12 @@
 import type { ReactNode } from "react";
-import lockupLight from "../assets/lockup-light.png";
-import lockupDark from "../assets/lockup-dark.png";
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import { KairoLockup } from "../components/Brand";
 
 /**
  * AuthLayout — the shared "welcome surface": centered card on a soft accent
- * gradient with the brand lockup above it. The one place gradients are allowed
- * (see docs/07-ui-design.md); dashboards stay flat. The correct lockup for the
- * active theme is chosen in CSS via the [data-theme] attribute on <html>.
+ * gradient with the Kairo lockup above it. The one place gradients are allowed
+ * (see docs/07-ui-design.md); dashboards stay flat. The lockup's
+ * wordmark is live text, so it follows the theme on its own.
  */
 export function AuthLayout({
   children,
@@ -30,10 +29,9 @@ export function AuthLayout({
         <LanguageSwitcher />
       </div>
       {!hideLockup && (
-        <>
-          <img className="auth-logo logo-light" src={lockupLight} alt="BiBoTracking" />
-          <img className="auth-logo logo-dark" src={lockupDark} alt="BiBoTracking" />
-        </>
+        <div className="auth-logo">
+          <KairoLockup size={40} />
+        </div>
       )}
       {bare ? children : <div className={wide ? "auth-card wide" : "auth-card"}>{children}</div>}
       {footer && <div className="auth-foot">{footer}</div>}

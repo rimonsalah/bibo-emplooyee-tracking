@@ -122,7 +122,7 @@ pub fn backend_base_url() -> String {
 impl Default for Settings {
     fn default() -> Self {
         Settings {
-            theme: "system".into(),
+            theme: "dark".into(), // Kairo is dark-first
             idle_threshold_s: DEFAULT_IDLE_THRESHOLD_S,
             screenshot_interval_s: DEFAULT_SCREENSHOT_INTERVAL_S,
             screenshot_retention_days: DEFAULT_RETENTION_DAYS,

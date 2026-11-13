@@ -18,7 +18,8 @@ function resolve(mode: ThemeMode): "light" | "dark" {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [mode, setModeState] = useState<ThemeMode>(
-    () => (localStorage.getItem(KEY) as ThemeMode) || "system",
+    // Kairo is dark-first: new visitors start in dark; a saved choice wins.
+    () => (localStorage.getItem(KEY) as ThemeMode) || "dark",
   );
 
   useEffect(() => {

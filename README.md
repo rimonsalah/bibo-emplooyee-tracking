@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="marketing/logo/mark-accent.png" alt="BiBoTracking" width="88" />
+<img src="brand/kairo-mark.svg" alt="Kairo" width="88" />
 
-# BiBoTracking
+# Kairo
 
 **The free, open-source, self-hostable [Hubstaff](https://hubstaff.com) alternative.**
 
@@ -10,27 +10,25 @@ Local-first time & activity tracking for teams and families. A desktop app captu
 activity on each machine and (optionally) syncs to a backend you control; owners review
 everything in a clean web dashboard.
 
-[Website](https://bibotracker.com) ·
-[Download for macOS](https://bibotracker.com/download/EmployeeTracker-macOS.dmg) ·
-[Chrome extension](https://chromewebstore.google.com/detail/employee-tracker/meoifmgllkafmaeckbdambfnoolnilme) ·
-[vs Hubstaff](https://bibotracker.com/#compare) ·
-[Telegram support](https://t.me/bibotracker)
+[Download](marketing/site/index.html#download) ·
+[Windows installer build](.github/workflows/desktop-windows.yml) ·
+[Browser extension](apps/extension/README.md)
 
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform: macOS · Windows](https://img.shields.io/badge/desktop-macOS%20%C2%B7%20Windows-555)
 ![Backend: Go](https://img.shields.io/badge/backend-Go-00ADD8?logo=go&logoColor=white)
 ![Self-hostable](https://img.shields.io/badge/self--hostable-yes-22c55e)
 
-<img src="marketing/captures/web-dashboard.png" alt="BiBoTracking owner dashboard" width="820" />
+<img src="marketing/captures/web-dashboard.png" alt="Kairo owner dashboard" width="820" />
 
 </div>
 
 ---
 
-## Why BiBoTracking
+## Why Kairo
 
 Most employee-tracking tools are expensive per-seat SaaS that ship your team's activity to
-someone else's cloud. BiBoTracking flips that:
+someone else's cloud. Kairo flips that:
 
 - 💸 **Free & open source** — read, audit and run the whole stack yourself. No per-seat pricing.
 - 🔒 **Local-first & private** — activity is stored **on each device**, and only rolled up to a
@@ -42,9 +40,8 @@ someone else's cloud. BiBoTracking flips that:
   (employee/kid, owner/parent).
 - 🌍 **7 languages** — English, 简体中文, 日本語, Tiếng Việt, Bahasa Indonesia, Français, Español.
 
-> **Hosted option:** prefer not to run servers? The hosted service at
-> [bibotracker.com](https://bibotracker.com) is free for your first two years, then $1/month.
-> Self-hosting is free, forever.
+> Kairo is self-hosted: you run the backend, your data stays on your servers.
+> Based on the MIT-licensed [BiBoTracking](https://github.com/ngnclht1102/bibo-emplooyee-tracking) by Brian Nguyen.
 
 ## What it captures
 
@@ -86,7 +83,7 @@ Migrations are embedded and run automatically on startup (goose).
 desktop app).
 
 ```bash
-git clone https://github.com/ngnclht1102/bibo-emplooyee-tracking.git
+git clone https://github.com/rimonsalah/bibo-emplooyee-tracking.git
 cd bibo-emplooyee-tracking
 pnpm install
 
@@ -134,13 +131,11 @@ A step-by-step production guide lives in [`docs/`](docs/).
 - The desktop app stores activity **locally**; syncing to a backend is the owner's choice.
 - The Chrome extension only ever talks to the **local** app (`127.0.0.1`) — never the cloud.
 - Ownership is always scoped: an owner only ever sees their own workspace's data.
-- Full policy: [bibotracker.com/privacy](https://bibotracker.com/privacy/).
+- Full policy: [marketing/site/privacy](marketing/site/privacy/index.html).
 
 ## Support
 
-- 💬 **Telegram:** [@bibotracker](https://t.me/bibotracker)
-- 🐛 **Bugs / features:** [open an issue](https://github.com/ngnclht1102/bibo-emplooyee-tracking/issues)
-- ✉️ **Email:** brian.nguyen.work@gmail.com
+- 🐛 **Bugs / features:** [open an issue](https://github.com/rimonsalah/bibo-emplooyee-tracking/issues)
 
 ## Contributing
 
@@ -157,5 +152,5 @@ Released under the **MIT License**. See [`LICENSE`](LICENSE).
 ---
 
 <div align="center">
-<sub>Built with care · <a href="https://bibotracker.com">bibotracker.com</a></sub>
+<sub>Kairo · MIT licensed</sub>
 </div>

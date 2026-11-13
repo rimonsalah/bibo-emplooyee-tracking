@@ -14,11 +14,11 @@ use serde::{Deserialize, Serialize};
 use super::auth::{AuthState, Session};
 use crate::storage::{PendingActivity, PendingBrowser, PendingKeystroke, PendingScreenshot};
 
-/// User-Agent for backend calls, e.g. `BiBoTracking-Desktop/1.5.1 (windows)`.
+/// User-Agent for backend calls, e.g. `Kairo-Desktop/1.5.1 (windows)`.
 /// The web admin's Login history uses it to label desktop sign-ins.
 fn user_agent() -> String {
     format!(
-        "BiBoTracking-Desktop/{} ({})",
+        "Kairo-Desktop/{} ({})",
         env!("CARGO_PKG_VERSION"),
         std::env::consts::OS
     )

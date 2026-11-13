@@ -1,0 +1,30 @@
+# Packages the browser extension as Kairo-extension.zip (Chrome, Edge, Brave, Opera).
+# Upload the artifact to the backend's <STATIC_DIR>/download/ so the landing page's
+# "Download extension (.zip)" button works, or submit it to the Chrome Web Store /
+# Edge Add-ons and set SITE_EXT_CHROME / SITE_EXT_EDGE when building the site.
+name: "Extension: package .zip"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["apps/extension/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate manifest
+        run: node -e 'const m=require("./apps/extension/manifest.json"); if(m.manifest_version!==3) throw new Error("expected MV3"); console.log(m.name, m.version)'
+      - name: Zip (runtime files only)
+        working-directory: apps/extension
+        run: zip -r -X ../../Kairo-extension.zip manifest.json background.js popup.html popup.js icons
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Kairo-extension
+          path: Kairo-extension.zip
+          if-no-files-found: error

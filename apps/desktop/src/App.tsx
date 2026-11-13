@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ReactElement } from "react";
+import { BRAND, KairoMark } from "./Brand";
 import { call as invoke } from "./api";
 import { Sentry } from "./sentry";
 import { autoCheckAndPrompt } from "./updater";
@@ -351,7 +352,7 @@ function App() {
   }
 
   // First-run onboarding (3 steps: what's captured → configure → permissions),
-  // shown once per install. Step 1 is the "What BiBoTracking captures" disclosure,
+  // shown once per install. Step 1 is the "What Kairo captures" disclosure,
   // so finishing/skipping it also records `consented` (gates capture on Windows).
   if (settings && !settings.onboarding_completed) {
     return (
@@ -376,20 +377,17 @@ function App() {
   return (
     <div className="app">
       <div className="app-titlebar" onMouseDown={dragWindow}>
-        <span className="app-titlebar-title">BiBoTracking — {t(`nav.${screen}`)}</span>
+        <span className="app-titlebar-title">{BRAND} — {t(`nav.${screen}`)}</span>
         <AppTrayMenu status={status} onToggleTracking={toggleTracking} />
       </div>
       <div className="app-body">
       <aside className="sidebar">
         <div className="brand">
-          <span className="brand-logo" aria-hidden>
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M4.5 12 h3.2 l1.8 -4.4 l2.4 8.8 l1.8 -4.4 h4.5" />
-            </svg>
+          <span className="brand-logo">
+            <KairoMark size={26} />
           </span>
           <span className="brand-text">
-            <span className="brand-name">Bi<span className="brand-accent">Bo</span>Tracking</span>
+            <span className="brand-name">{BRAND}</span>
             {version && <span className="brand-version">v{version}</span>}
           </span>
         </div>

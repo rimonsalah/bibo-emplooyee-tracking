@@ -11,11 +11,12 @@ import { activeLocale } from "../i18n";
 const OS_NAMES: Record<string, string> = { windows: "Windows", macos: "macOS", linux: "Linux" };
 
 // Best-effort device label from the User-Agent. The desktop app sends
-// "BiBoTracking-Desktop/<version> (<os>)"; anything else is a browser.
+// "Kairo-Desktop/<version> (<os>)" (older builds: "BiBoTracking-Desktop/…");
+// anything else is a browser.
 // OS / product names are not translated.
 function deviceLabel(userAgent: string, t: TFunction<"settings">): string {
   if (!userAgent) return t("loginHistory.device.unknown");
-  const desktop = /BiBoTracking-Desktop\/([\w.\-]+)(?: \((\w+)\))?/.exec(userAgent);
+  const desktop = /(?:Kairo|BiBoTracking)-Desktop\/([\w.\-]+)(?: \((\w+)\))?/.exec(userAgent);
   if (desktop) {
     const os = desktop[2] ? OS_NAMES[desktop[2]] ?? desktop[2] : null;
     return `${t("loginHistory.device.desktop")}${os ? ` · ${os}` : ""}`;

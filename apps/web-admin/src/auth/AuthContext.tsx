@@ -10,8 +10,8 @@ import { Sentry } from "../sentry";
 // backend. id matches the roster owner in demo.ts so their row shows "You".
 const DEMO_USER: User = {
   id: "demo-owner",
-  email: "brian@home.app",
-  display_name: "Brian Nguyen",
+  email: "alex@home.app",
+  display_name: "Alex Tran",
   account_type: "parent",
 };
 

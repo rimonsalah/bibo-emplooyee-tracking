@@ -1,25 +1,29 @@
-/* ctracking — semantic design tokens (see docs/07-ui-design.md) */
+/* Kairo — semantic design tokens. Midnight + lime, dark-first.
+   Lime (--brand-500) is a FILL colour: always put --on-brand (navy) text on it.
+   For lime-ish text/lines on light backgrounds use --accent (olive), which passes
+   contrast on white; in dark mode --accent is the lime itself. */
 
 :root,
 :root[data-theme="light"] {
   --bg: #ffffff;
-  --bg-subtle: #f6f6f6;
+  --bg-subtle: #f3f5f9;
   --bg-inset: #ffffff;
-  --border: #e3e3e3;
-  --text: #1a1a1a;
-  --text-muted: #6b6b6b;
+  --border: #dfe3ec;
+  --text: #0b1020;
+  --text-muted: #5a6478;
   /* aliases used by components ported from the offline design */
   --text-primary: var(--text);
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui,
     sans-serif;
-  --accent: #2d6cdf;
-  --accent-weak: #eaf1fe;
+  --font-display: "Space Grotesk Variable", var(--font-sans);
+  --accent: #4d7c0f;
+  --accent-weak: #eef8d2;
   --danger: #c0392b;
   --negative: #dc2626;
   --success: #2e7d55;
   --warn: #b8860b;
 
-  --radius: 6px;
+  --radius: 10px;
   --sp-1: 4px;
   --sp-2: 8px;
   --sp-3: 12px;
@@ -32,94 +36,91 @@
   --fz-md: 16px;
   --fz-lg: 22px;
 
-  /* Signature background (UX v2, docs/14 §4 — overrides the flat rule in docs/07).
-     A bold blue→violet→pink mesh used app-wide; surfaces sit on it as translucent
-     glass. Components reference these tokens, never raw hex. */
-  --violet: #8b5cf6;
-  --pink: #ec4899;
-  --app-base: #f3f4fb;
-  --app-gradient: radial-gradient(
-      at 0% 0%,
-      color-mix(in srgb, var(--accent) 40%, transparent),
-      transparent 55%
-    ),
-    radial-gradient(at 100% 0%, color-mix(in srgb, var(--violet) 34%, transparent), transparent 55%),
-    radial-gradient(at 85% 100%, color-mix(in srgb, var(--pink) 28%, transparent), transparent 55%);
+  /* Signature background: cool paper with a faint lime + cyan glow. */
+  --violet: var(--accent); /* legacy name — now the brand accent */
+  --pink: #22d3ee; /* legacy name — secondary glow (cyan) */
+  --app-base: #eef1f6;
+  --app-gradient: radial-gradient(1100px 700px at 8% -10%, rgba(198, 244, 50, 0.22), transparent 55%),
+    radial-gradient(900px 600px at 100% 0%, rgba(34, 211, 238, 0.12), transparent 50%),
+    linear-gradient(160deg, #f2f4f8, #e9edf4);
   /* translucent "glass" surfaces over the gradient */
-  --surface: color-mix(in srgb, var(--bg) 68%, transparent);
-  --surface-strong: color-mix(in srgb, var(--bg) 85%, transparent);
+  --surface: color-mix(in srgb, var(--bg) 72%, transparent);
+  --surface-strong: color-mix(in srgb, var(--bg) 88%, transparent);
   --surface-glass-2: rgba(255, 255, 255, 0.07);
-  /* semantic + data-viz palette (dashboard cards, sparklines, status) */
+  /* semantic + data-viz palette (dashboard cards, status) */
   --positive: #16a34a;
   --positive-soft: #dcfce7;
   --negative: #dc2626;
   --negative-soft: #fee2e2;
-  --info: #3b82f6;
-  --info-soft: #deeafe;
+  --info: #0284c7;
+  --info-soft: #e0f2fe;
   --data-sky: #38bdf8;
   --data-mint: #10b981;
   --data-amber: #f59e0b;
   --data-rose: #f43f5e;
-  --data-lavender: #8b7df6;
+  --data-lavender: #84cc16; /* first app colour = brand lime (light-mode strength) */
   --data-teal: #14b8a6;
   /* sunken track/inset surfaces (timeline, app bars, donut ring) */
-  --surface-sunken: #edeff5;
-  --control-track: rgba(20, 22, 27, 0.1);
-  /* brand (lavender-indigo) + focal stat card, per offline design */
-  --brand-tint: #f4f2fe;
-  --brand-400: #8b7df6;
-  --brand-500: #6c5ce7;
-  --brand-600: #5b4bd6;
-  --ring-focus: 0 0 0 3px rgba(108, 92, 231, 0.45);
-  --surface-hover: #f1f3f8;
-  --border-strong: #cbd2e0;
-  --border-subtle: rgba(20, 22, 27, 0.08);
-  --ink: #1b1f2b;
-  --focal-grad: linear-gradient(155deg, #20242e, #111319);
-  --focal-border: rgba(255, 255, 255, 0.08);
-  --focal-muted: rgba(255, 255, 255, 0.58);
+  --surface-sunken: #e8ecf3;
+  --control-track: rgba(11, 16, 32, 0.1);
+  /* brand */
+  --brand-tint: #eef8d2;
+  --brand-400: #d7fa6a;
+  --brand-500: #c6f432;
+  --brand-600: #4d7c0f;
+  --on-brand: #0b1020;
+  --ring-focus: 0 0 0 3px rgba(77, 124, 15, 0.4);
+  --surface-hover: #eef1f6;
+  --border-strong: #c5ccda;
+  --border-subtle: rgba(11, 16, 32, 0.08);
+  --ink: #0b1020;
+  /* focal stat card: a midnight tile in both themes */
+  --focal-grad: linear-gradient(155deg, #18213d, #0b1020);
+  --focal-border: rgba(198, 244, 50, 0.28);
+  --focal-muted: rgba(232, 236, 245, 0.62);
 }
 
 :root[data-theme="dark"] {
-  --bg: #1a1a1a;
-  --bg-subtle: #242424;
-  --bg-inset: #2e2e2e;
-  --border: #363636;
-  --text: #ececec;
-  --text-muted: #9a9a9a;
-  --accent: #5b8def;
-  --accent-weak: #1e2a40;
-  --danger: #e06a5c;
+  --bg: #121a2e;
+  --bg-subtle: #0e1528;
+  --bg-inset: #1a2440;
+  --border: #26304a;
+  --text: #e8ecf5;
+  --text-muted: #8b95ad;
+  --accent: #c6f432;
+  --accent-weak: rgba(198, 244, 50, 0.14);
+  --danger: #f08070;
   --negative: #f87171;
-  --success: #5fb58a;
-  --warn: #d6a93b;
-  /* dark background per offline design: near-black navy base + lavender/teal mesh */
-  --app-base: #0c0f16;
-  --app-gradient: radial-gradient(1200px 800px at 12% -8%, #1b1640, transparent 55%),
-    radial-gradient(1000px 700px at 100% 0%, #122033, transparent 50%),
-    linear-gradient(160deg, #11151e, #0b0e15);
+  --success: #5fd08f;
+  --warn: #f5c451;
+  /* midnight base with a faint lime + cyan glow */
+  --app-base: #0b1020;
+  --app-gradient: radial-gradient(1100px 700px at 8% -10%, rgba(198, 244, 50, 0.09), transparent 55%),
+    radial-gradient(900px 600px at 100% 0%, rgba(34, 211, 238, 0.07), transparent 50%),
+    linear-gradient(160deg, #0d1326, #090d1a);
   --positive: #4ade80;
   --positive-soft: color-mix(in srgb, #4ade80 16%, transparent);
   --negative-soft: color-mix(in srgb, #f87171 16%, transparent);
-  --info: #93b4ff;
-  --info-soft: color-mix(in srgb, #6c8cff 16%, transparent);
+  --info: #7dd3fc;
+  --info-soft: color-mix(in srgb, #38bdf8 16%, transparent);
   --data-sky: #56ccf2;
   --data-mint: #34d399;
   --data-amber: #fbbf24;
   --data-rose: #fb7185;
-  --data-lavender: #a78bfa;
+  --data-lavender: #c6f432;
   --data-teal: #2dd4bf;
-  --surface-sunken: #1b212d;
+  --surface-sunken: #0e1528;
   --control-track: rgba(255, 255, 255, 0.1);
-  /* focal stat card — near-black gradient + lavender border per offline dark */
-  --focal-grad: linear-gradient(155deg, #0e1016, #050608);
-  --focal-border: rgba(139, 125, 246, 0.32);
-  --focal-muted: rgba(255, 255, 255, 0.55);
-  --surface-hover: #1f2633;
-  --border-strong: rgba(255, 255, 255, 0.18);
-  --brand-500: #6c5ce7;
+  --focal-grad: linear-gradient(155deg, #1b2546, #0b1020);
+  --focal-border: rgba(198, 244, 50, 0.36);
+  --focal-muted: rgba(232, 236, 245, 0.58);
+  --surface-hover: #1a2440;
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --brand-tint: rgba(198, 244, 50, 0.12);
+  --brand-600: #d7fa6a;
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --ink: #0b0e16;
+  --ink: #070b16;
+  --ring-focus: 0 0 0 3px rgba(198, 244, 50, 0.45);
 }
 
 * {
@@ -134,12 +135,9 @@ body,
 }
 
 body {
-  /* light theme (default): subtle blue-grey lavender gradient per the offline
-     design; dark keeps its own signature gradient below */
-  background-color: #eaedf6;
-  background-image: radial-gradient(1200px 800px at 12% -8%, #ece9fa, transparent 55%),
-    radial-gradient(1000px 700px at 100% 0%, #e7ecf8, transparent 50%),
-    linear-gradient(160deg, #eef0f8, #e4e8f3);
+  /* Kairo: cool paper + lime/cyan glow (light); midnight version below */
+  background-color: var(--app-base);
+  background-image: var(--app-gradient);
   background-attachment: fixed;
   background-repeat: no-repeat;
   color: var(--text);
@@ -229,9 +227,9 @@ body {
   color: var(--text);
 }
 .ad-railbtn.on {
-  background: #6c5ce7;
+  background: var(--brand-500);
   color: #fff;
-  box-shadow: 0 8px 18px -4px rgba(108, 92, 231, 0.5);
+  box-shadow: 0 8px 18px -4px color-mix(in srgb, var(--brand-500) 50%, transparent);
 }
 :root[data-theme="dark"] .ad-railbtn:not(.on) {
   color: #6b7488;
@@ -362,23 +360,23 @@ body {
 }
 :root[data-theme="dark"] .ad-bizpick__btn,
 :root[data-theme="dark"] .ad-newbiz {
-  background: #1b212d;
+  background: #16203a;
   color: #f1f3f8;
   border-color: #363636;
 }
 :root[data-theme="dark"] .ad-bizpick__btn:hover:not(:disabled),
 :root[data-theme="dark"] .ad-newbiz:hover {
   border-color: #363636;
-  background: #1f2633;
+  background: #1a2440;
 }
 :root[data-theme="dark"] .ad-topbar .lang-trigger {
-  background: #1b212d;
+  background: #16203a;
   color: #a6adbf;
   border-color: #363636;
 }
 :root[data-theme="dark"] .ad-topbar .lang-trigger:hover {
   border-color: #363636;
-  background: #1f2633;
+  background: #1a2440;
 }
 :root[data-theme="dark"] .ad-topbar .lang-globe,
 :root[data-theme="dark"] .ad-topbar .lang-caret {
@@ -478,7 +476,7 @@ body {
   color: #4c3cc9;
 }
 :root[data-theme="dark"] .ad-bizpick__ic {
-  background: color-mix(in srgb, #6c5ce7 26%, transparent);
+  background: color-mix(in srgb, var(--brand-500) 26%, transparent);
   color: #c4bbff;
 }
 .ad-bizpick__name {
@@ -509,7 +507,7 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 :root[data-theme="dark"] .ad-menu {
-  background: #161b25;
+  background: #121a2e;
 }
 .ad-menu--left {
   left: 0;
@@ -561,13 +559,13 @@ body {
   height: 16px;
 }
 .ad-menu__opt.on {
-  color: #6c5ce7;
+  color: var(--brand-500);
   background: #ecebfb;
   font-weight: 600;
 }
 :root[data-theme="dark"] .ad-menu__opt.on {
   color: #c4bbff;
-  background: color-mix(in srgb, #6c5ce7 22%, transparent);
+  background: color-mix(in srgb, var(--brand-500) 22%, transparent);
 }
 .ad-menu__sep {
   height: 1px;
@@ -632,13 +630,13 @@ body {
   box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.25);
 }
 :root[data-theme="dark"] .bibo-seg {
-  background: #11151e;
+  background: #0e1528;
 }
 :root[data-theme="dark"] .bibo-seg__opt {
   color: #a6adbf;
 }
 :root[data-theme="dark"] .bibo-seg__opt--on {
-  background: #171a25;
+  background: #131b30;
   border-color: rgba(255, 255, 255, 0.06);
   color: #fff;
   box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.45);
@@ -658,7 +656,7 @@ body {
   border-radius: 50%;
 }
 .ad-acct-btn:focus-visible {
-  outline: 2px solid #8b7df6;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 .ad-acctmenu {
@@ -829,7 +827,7 @@ body {
   cursor: default;
 }
 :root[data-theme="dark"] .segmented {
-  background: #11151e;
+  background: #0e1528;
   border-color: rgba(255, 255, 255, 0.06);
 }
 :root[data-theme="dark"] .segmented button {
@@ -837,7 +835,7 @@ body {
 }
 /* active thumb = offline "surface-raised", lifted off the sunken track */
 :root[data-theme="dark"] .segmented button.active {
-  background: #1b212d;
+  background: #16203a;
   border-color: rgba(255, 255, 255, 0.08);
   color: #fff;
   box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -976,7 +974,7 @@ td {
 /* dark: solid offline "surface-card" with shadow-md + a faint top rim-light,
    matching the offline .card (no glass blur) */
 :root[data-theme="dark"] .set-group {
-  background: #161b25;
+  background: #121a2e;
   border-color: rgba(255, 255, 255, 0.06);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -1258,9 +1256,7 @@ select.input:focus,
 }
 .auth-wrap.welcome {
   /* light: soft lavender auth gradient (per request); dark keeps the app-wide body gradient */
-  background: radial-gradient(1200px 800px at 12% -8%, #ECE9FA, transparent 55%),
-    radial-gradient(1000px 700px at 100% 0%, #E7ECF8, transparent 50%),
-    linear-gradient(160deg, #EEF0F8, #E4E8F3);
+  background: var(--app-gradient);
 }
 :root[data-theme="dark"] .auth-wrap.welcome {
   background: transparent;
@@ -1322,14 +1318,14 @@ select.input:focus,
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 36px 32px;
-  box-shadow: 0 20px 50px -20px rgba(38, 30, 90, 0.35);
+  box-shadow: 0 20px 50px -20px rgba(11, 16, 32, 0.35);
 }
 .ad-login__logo {
   width: 52px;
   height: 52px;
   border-radius: 16px;
   display: block;
-  box-shadow: 0 12px 26px -10px rgba(108, 92, 231, 0.75);
+  box-shadow: 0 12px 26px -10px color-mix(in srgb, var(--brand-500) 75%, transparent);
   margin-bottom: 22px;
 }
 .ad-login__logo svg {
@@ -1378,8 +1374,8 @@ select.input:focus,
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .bibo-input:focus-within {
-  border-color: #8b7df6;
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.45);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-500) 45%, transparent);
 }
 .bibo-input__icon {
   flex: none;
@@ -1440,22 +1436,22 @@ select.input:focus,
 /* dark: settings cleanup button sits on the card surface — matching fill,
    faint rim, lighter hover (offline surface-card / surface-hover) */
 :root[data-theme="dark"] .set-group .bibo-btn--secondary {
-  background: #161b25;
+  background: #121a2e;
   border-color: rgba(255, 255, 255, 0.1);
   color: #f1f3f8;
 }
 :root[data-theme="dark"] .set-group .bibo-btn--secondary:hover:not(:disabled) {
-  background: #1f2633;
+  background: #1a2440;
   border-color: rgba(255, 255, 255, 0.1);
   color: #f1f3f8;
 }
 .bibo-btn--primary {
-  background: #6c5ce7;
+  background: var(--brand-500);
   color: #fff;
-  box-shadow: 0 12px 24px -12px rgba(108, 92, 231, 0.9);
+  box-shadow: 0 12px 24px -12px color-mix(in srgb, var(--brand-500) 90%, transparent);
 }
 .bibo-btn--primary:hover:not(:disabled) {
-  background: #5f4dd0;
+  background: var(--brand-400);
 }
 .bibo-btn--primary:disabled {
   cursor: not-allowed;
@@ -1502,7 +1498,7 @@ select.input:focus,
   font: inherit;
   font-size: 14px;
   font-weight: 600;
-  color: #6c5ce7;
+  color: var(--brand-500);
   text-decoration: none;
   cursor: pointer;
 }
@@ -1520,7 +1516,7 @@ select.input:focus,
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 32px 36px 28px;
-  box-shadow: 0 20px 50px -20px rgba(38, 30, 90, 0.35);
+  box-shadow: 0 20px 50px -20px rgba(11, 16, 32, 0.35);
 }
 :root[data-theme="dark"] .ad-wizard {
   background: var(--surface-strong);
@@ -1538,10 +1534,10 @@ select.input:focus,
   background: var(--border);
 }
 .ad-wiz-pip.on {
-  background: #6c5ce7;
+  background: var(--brand-500);
 }
 .ad-wiz-pip.done {
-  background: color-mix(in srgb, #6c5ce7 50%, var(--border));
+  background: color-mix(in srgb, var(--brand-500) 50%, var(--border));
 }
 .ad-wiz-step {
   text-align: center;
@@ -1590,14 +1586,14 @@ select.input:focus,
   background: var(--bg-subtle);
 }
 .ad-persona:hover {
-  border-color: #6c5ce7;
+  border-color: var(--brand-500);
   background: var(--bg-inset);
-  box-shadow: 0 8px 20px -12px rgba(108, 92, 231, 0.6);
+  box-shadow: 0 8px 20px -12px color-mix(in srgb, var(--brand-500) 60%, transparent);
 }
 .ad-persona__ic {
   flex: none;
   display: inline-flex;
-  color: #6c5ce7;
+  color: var(--brand-500);
 }
 .ad-persona__ic svg {
   width: 24px;
@@ -1708,9 +1704,9 @@ select.input:focus,
 }
 /* Selected/open persona card — mirrors the hover affordance. */
 .ad-persona--open {
-  border-color: #6c5ce7;
+  border-color: var(--brand-500);
   background: var(--bg-inset);
-  box-shadow: 0 8px 20px -12px rgba(108, 92, 231, 0.6);
+  box-shadow: 0 8px 20px -12px color-mix(in srgb, var(--brand-500) 60%, transparent);
 }
 
 /* ---------- signup wizard — members step (add employees / kids) ---------- */
@@ -1872,8 +1868,8 @@ select.input:focus,
   border: 1px solid var(--border);
 }
 .bibo-btn--secondary:hover:not(:disabled) {
-  border-color: #6c5ce7;
-  color: #6c5ce7;
+  border-color: var(--brand-500);
+  color: var(--brand-500);
 }
 .bibo-btn--secondary svg {
   width: 20px;
@@ -2268,7 +2264,7 @@ select.input:focus,
   animation: bibo-dlg-fade 0.18s ease;
 }
 :root[data-theme="dark"] .bibo-dlg {
-  background: #161b25;
+  background: #121a2e;
   border-color: rgba(255, 255, 255, 0.08);
   box-shadow: 0 30px 80px -16px rgba(0, 0, 0, 0.7), 0 8px 24px -12px rgba(0, 0, 0, 0.55);
 }
@@ -2361,7 +2357,7 @@ select.input:focus,
   height: 24px;
 }
 :root[data-theme="dark"] .bibo-dlg .bibo-btn--secondary {
-  background: #161b25;
+  background: #121a2e;
   border-color: rgba(255, 255, 255, 0.1);
   color: #f1f3f8;
 }
@@ -2371,7 +2367,7 @@ select.input:focus,
 }
 /* dialog input in dark theme: solid navy fill + light border, text/hover/focus */
 :root[data-theme="dark"] .bibo-dlg .bibo-input {
-  background: #1b212d;
+  background: #16203a;
   border-color: rgba(255, 255, 255, 0.1);
 }
 :root[data-theme="dark"] .bibo-dlg .bibo-input:hover:not(:focus-within) {
@@ -2382,7 +2378,7 @@ select.input:focus,
   box-shadow: var(--ring-focus);
 }
 :root[data-theme="dark"] .bibo-dlg .bibo-input input {
-  color: #f4f2fe;
+  color: var(--text);
 }
 :root[data-theme="dark"] .bibo-dlg .bibo-input input::placeholder {
   color: #5b6276;
@@ -2635,9 +2631,9 @@ select.input:focus,
   border-color: rgba(255, 255, 255, 0.1);
 }
 :root[data-theme="dark"] .ad-pagehead__actions .bibo-btn--secondary:hover:not(:disabled) {
-  background: #1f2633;
+  background: #1a2440;
   color: #fff;
-  border-color: #1f2633;
+  border-color: #1a2440;
 }
 .ad-pagehead__actions .bibo-btn {
   font-size: 14px;
@@ -2680,7 +2676,7 @@ select.input:focus,
   background: #ffffff;
 }
 :root[data-theme="dark"] .ad-stats .bibo-card--default {
-  background: #161b25; /* offline --surface-card (solid, not glass) */
+  background: #121a2e; /* offline --surface-card (solid, not glass) */
 }
 .bibo-card {
   border: 1px solid var(--border);
@@ -2794,7 +2790,7 @@ select.input:focus,
   display: none;
 }
 :root[data-theme="dark"] .ad-tablecard {
-  background: #171a25;
+  background: #131b30;
 }
 .ad-table {
   width: 100%;
@@ -2835,7 +2831,7 @@ select.input:focus,
 }
 :root[data-theme="dark"] .ad-table th:last-child,
 :root[data-theme="dark"] .ad-table td:last-child {
-  background: #171a25;
+  background: #131b30;
 }
 /* row hover — recolor every cell (incl. the pinned View cell) */
 .ad-table tbody td {
@@ -2845,7 +2841,7 @@ select.input:focus,
   background: #f3f4fc;
 }
 :root[data-theme="dark"] .ad-table tbody tr:hover td {
-  background: #1f2633;
+  background: #1a2440;
 }
 .ad-table td {
   padding: 16px 20px;
@@ -2934,7 +2930,7 @@ select.input:focus,
   border: none;
   background: none;
   cursor: pointer;
-  color: #5b4bd6;
+  color: var(--accent);
   font-size: 13px;
   font-weight: 600;
   font-family: inherit;
@@ -3046,7 +3042,7 @@ select.input:focus,
   color: var(--text);
 }
 :root[data-theme="dark"] .ad-datefield {
-  background: #1b212d;
+  background: #16203a;
 }
 .ad-datefield svg {
   width: 15px;
@@ -3100,8 +3096,8 @@ select.input:focus,
 }
 :root[data-theme="dark"] .bibo-tab--on,
 :root[data-theme="dark"] .bibo-tab--on:hover {
-  color: #4a3bc0;
-  background: #e9e8f3;
+  color: var(--on-brand);
+  background: var(--brand-500);
 }
 
 .ad-tabwrap {
@@ -3125,7 +3121,7 @@ select.input:focus,
 /* dark: report panels (activity two-col + keystrokes/browser/screenshots)
    use a solid surface, not the glass default */
 :root[data-theme="dark"] .ad-panel .bibo-card--default {
-  background: #171a25;
+  background: #131b30;
 }
 
 .ad-panelhead {
@@ -3411,4 +3407,103 @@ select.input:focus,
 /* breathing room below the last row of the Sites-visited card */
 .ad-panel .ad-tablecard {
   padding-bottom: 24px;
+}
+
+/* =====================================================================
+   Kairo brand layer — midnight + lime. Loaded last so it wins over the
+   component defaults above. Tokens live at the top of this file.
+   ===================================================================== */
+
+/* display type: headings, big numbers, brand */
+.ad-h1,
+.ad-topbar__title,
+.ad-login__title,
+.bibo-dlg__title,
+.ad-detailhead__name,
+.bibo-stat__value,
+.kairo-wordmark {
+  font-family: var(--font-display);
+}
+.ad-h1 {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.bibo-stat__value {
+  font-weight: 700;
+}
+
+/* lime is a fill: navy text on it, never white */
+.bibo-btn--primary {
+  background: var(--brand-500);
+  color: var(--on-brand);
+  font-weight: 650;
+  box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--brand-500) 90%, transparent);
+}
+.bibo-btn--primary:hover:not(:disabled) {
+  background: var(--brand-400);
+}
+.ad-railbtn.on {
+  background: var(--brand-500);
+  color: var(--on-brand);
+  box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--brand-500) 55%, transparent);
+}
+
+/* rail: frosted white in light, midnight glass in dark */
+:root[data-theme="dark"] .ad-rail {
+  background: rgba(14, 21, 40, 0.72);
+  border-right-color: rgba(255, 255, 255, 0.06);
+}
+.ad-rail__logo {
+  border-radius: 10px;
+  overflow: hidden;
+}
+:root[data-theme="dark"] .ad-railbtn:not(.on) {
+  color: #7d88a3;
+}
+
+/* focal stat card: midnight tile, lime icon chip */
+.bibo-stat--focal .bibo-stat__icon,
+:root[data-theme="dark"] .bibo-stat--focal .bibo-stat__icon {
+  background: var(--brand-500);
+  color: var(--on-brand);
+}
+.bibo-stat__icon {
+  color: var(--accent);
+}
+
+/* lockup + sign-in mark */
+.kairo-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--kairo-size, 40px) * 0.3);
+}
+.kairo-mark {
+  display: block;
+  flex: none;
+}
+.kairo-wordmark {
+  font-size: calc(var(--kairo-size, 40px) * 0.72);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: var(--text);
+}
+.auth-logo {
+  height: auto;
+  display: flex;
+  justify-content: center;
+}
+.ad-login__logo {
+  overflow: hidden;
+  box-shadow: 0 14px 30px -12px color-mix(in srgb, var(--brand-500) 55%, transparent);
+}
+
+/* focus + selection in brand colours */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+::selection {
+  background: var(--brand-500);
+  color: var(--on-brand);
 }
