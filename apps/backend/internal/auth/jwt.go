@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 // Token kinds. Access tokens authorize API calls; refresh tokens mint new access
@@ -34,6 +35,9 @@ func NewManager(secret string) *Manager {
 
 type claims struct {
 	Kind string `json:"kind"`
+	// Session id: minted at login and carried unchanged through every refresh,
+	// so logout can revoke the whole chain. Empty on tokens issued before it existed.
+	Sid string `json:"sid,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -44,13 +48,23 @@ type TokenPair struct {
 	ExpiresIn    int    `json:"expires_in"` // access token lifetime, seconds
 }
 
-// Issue mints a fresh access + refresh pair for the given user id.
+// Issue mints a fresh access + refresh pair for the given user id, starting a
+// new session (login/register).
 func (m *Manager) Issue(userID string) (TokenPair, error) {
-	access, err := m.sign(userID, kindAccess, accessTTL)
+	return m.IssueForSession(userID, uuid.NewString())
+}
+
+// IssueForSession mints a pair that continues an existing session (refresh).
+// An empty sid (legacy token) starts a new one.
+func (m *Manager) IssueForSession(userID, sid string) (TokenPair, error) {
+	if sid == "" {
+		sid = uuid.NewString()
+	}
+	access, err := m.sign(userID, sid, kindAccess, accessTTL)
 	if err != nil {
 		return TokenPair{}, err
 	}
-	refresh, err := m.sign(userID, kindRefresh, refreshTTL)
+	refresh, err := m.sign(userID, sid, kindRefresh, refreshTTL)
 	if err != nil {
 		return TokenPair{}, err
 	}
@@ -61,10 +75,11 @@ func (m *Manager) Issue(userID string) (TokenPair, error) {
 	}, nil
 }
 
-func (m *Manager) sign(userID, kind string, ttl time.Duration) (string, error) {
+func (m *Manager) sign(userID, sid, kind string, ttl time.Duration) (string, error) {
 	now := time.Now()
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, claims{
 		Kind: kind,
+		Sid:  sid,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   userID,
 			IssuedAt:  jwt.NewNumericDate(now),
@@ -84,7 +99,35 @@ func (m *Manager) ParseRefresh(token string) (string, error) {
 	return m.parse(token, kindRefresh)
 }
 
+// RefreshInfo is what refresh/logout need from a valid refresh token.
+type RefreshInfo struct {
+	UserID    string
+	Sid       string // empty for tokens issued before sessions existed
+	ExpiresAt time.Time
+}
+
+// ParseRefreshInfo validates a refresh token and returns its session and expiry.
+func (m *Manager) ParseRefreshInfo(token string) (RefreshInfo, error) {
+	c, err := m.parseClaims(token, kindRefresh)
+	if err != nil {
+		return RefreshInfo{}, err
+	}
+	info := RefreshInfo{UserID: c.Subject, Sid: c.Sid}
+	if c.ExpiresAt != nil {
+		info.ExpiresAt = c.ExpiresAt.Time
+	}
+	return info, nil
+}
+
 func (m *Manager) parse(token, wantKind string) (string, error) {
+	c, err := m.parseClaims(token, wantKind)
+	if err != nil {
+		return "", err
+	}
+	return c.Subject, nil
+}
+
+func (m *Manager) parseClaims(token, wantKind string) (*claims, error) {
 	c := &claims{}
 	parsed, err := jwt.ParseWithClaims(token, c, func(t *jwt.Token) (any, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -93,7 +136,7 @@ func (m *Manager) parse(token, wantKind string) (string, error) {
 		return m.secret, nil
 	})
 	if err != nil || !parsed.Valid || c.Kind != wantKind || c.Subject == "" {
-		return "", ErrInvalidToken
+		return nil, ErrInvalidToken
 	}
-	return c.Subject, nil
+	return c, nil
 }

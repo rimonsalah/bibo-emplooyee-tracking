@@ -166,18 +166,53 @@ func (h *AuthHandler) Refresh(c *gin.Context) {
 		badRequest(c, "invalid body")
 		return
 	}
-	userID, err := h.tok.ParseRefresh(req.RefreshToken)
+	info, err := h.tok.ParseRefreshInfo(req.RefreshToken)
 	if err != nil {
 		unauthorized(c, "invalid refresh token")
 		return
 	}
-	pair, err := h.tok.Issue(userID)
+	if info.Sid != "" {
+		revoked, err := h.store.IsSessionRevoked(c.Request.Context(), info.Sid)
+		if err != nil {
+			serverError(c, err)
+			return
+		}
+		if revoked {
+			unauthorized(c, "session signed out")
+			return
+		}
+	}
+	// Keep the same session id so a later logout revokes the whole chain.
+	pair, err := h.tok.IssueForSession(info.UserID, info.Sid)
 	if err != nil {
 		serverError(c, err)
 		return
 	}
-	obs.Info("login ok", "user", userID)
+	obs.Info("login ok", "user", info.UserID)
 	c.JSON(http.StatusOK, pair)
+}
+
+// Logout signs out the session the given refresh token belongs to: every refresh
+// token in that session stops working. Access tokens already issued stay valid
+// until they expire (≤15 min) since they're checked without a DB lookup.
+// Always 204 for a well-formed request, so clients can call it unconditionally.
+func (h *AuthHandler) Logout(c *gin.Context) {
+	var req refreshReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		badRequest(c, "invalid body")
+		return
+	}
+	info, err := h.tok.ParseRefreshInfo(req.RefreshToken)
+	// Invalid/expired token: nothing to revoke. Legacy token without a session
+	// id: can't be revoked individually; it simply expires.
+	if err == nil && info.Sid != "" {
+		if err := h.store.RevokeSession(c.Request.Context(), info.Sid, info.ExpiresAt); err != nil {
+			serverError(c, err)
+			return
+		}
+		obs.Info("logout", "user", info.UserID)
+	}
+	c.Status(http.StatusNoContent)
 }
 
 // PublicBusinesses lists businesses + owner names for the login picker (no auth).

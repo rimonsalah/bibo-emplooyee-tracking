@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { subscribeLogout } from "../api/client";
+import { logoutSession } from "../api/endpoints";
 import { tokenStore } from "../api/tokenStore";
 import { isDemo } from "../api/demo";
 import type { User } from "../api/types";
@@ -56,6 +57,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsAuthed(true);
     },
     logout: () => {
+      // Revoke server-side first (it reads the refresh token), but don't wait:
+      // the UI signs out immediately either way.
+      void logoutSession();
       tokenStore.clear();
       setUser(null);
       setIsAuthed(false);

@@ -33,7 +33,7 @@ dashboard. Open-source, self-hostable, positioned as a Hubstaff alternative.
 
 ## Auth & data model (backend)
 - Postgres; migrations in `apps/backend/internal/db/migrations` (goose, embedded, run on
-  startup). Latest = `00007_member_username.sql`.
+  startup). Latest = `00012_revoked_refresh_tokens.sql`.
 - `users` (email **and/or** username — either is a login identifier; ≥1 required),
   `businesses` (kind `team|family`), `memberships` (role `owner|employee`, unique per
   user+business), `devices`, activity/screenshot/browser tables.
@@ -77,7 +77,7 @@ dashboard. Open-source, self-hostable, positioned as a Hubstaff alternative.
 
 ## Conventions
 - Tickets: every change is logged in `docs/tickets/NN-*.md` (+ `00-INDEX.md`); QA tickets are
-  interactive (human runs the app). Highest ticket so far: 114.
+  interactive (human runs the app). Highest ticket so far: 145.
 - Verify before claiming done: web/desktop `tsc --noEmit` + `vite build`; backend `go build ./...`;
   Rust `cargo check` (in `apps/desktop/src-tauri`).
 - After backend code changes the `go run` dev server must be **restarted** (no hot reload).

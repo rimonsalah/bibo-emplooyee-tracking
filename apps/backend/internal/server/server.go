@@ -76,6 +76,7 @@ func New(cfg *config.Config, st *store.Store, files *filestore.Store, ret *reten
 	a.POST("/register", authH.Register)
 	a.POST("/login", authH.Login)
 	a.POST("/refresh", authH.Refresh)
+	a.POST("/logout", authH.Logout)
 
 	// Protected routes. Owner/sync/report routes register under this group in
 	// later tasks.

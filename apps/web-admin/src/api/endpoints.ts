@@ -79,6 +79,22 @@ export function refresh(refresh_token: string) {
   });
 }
 
+// Revokes this browser's session server-side (all its refresh tokens). Best
+// effort: local sign-out must not depend on it, so errors are swallowed.
+export async function logoutSession(): Promise<void> {
+  const refresh_token = tokenStore.getRefresh();
+  if (!refresh_token || isDemo()) return;
+  try {
+    await request<void>("/v1/auth/logout", {
+      method: "POST",
+      auth: false,
+      body: { refresh_token },
+    });
+  } catch {
+    // offline / older backend without /logout — the token just expires
+  }
+}
+
 export function getMe() {
   return request<User>("/v1/me");
 }

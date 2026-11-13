@@ -26,6 +26,6 @@ counts that were wrong.
 
 ## Verify
 - web-admin `tsc --noEmit` + `vite build` — pass.
-- Backend `go build ./...` — **not run** (no Go toolchain on the dev machine used).
+- Backend `go build ./...` + `go vet` + `go test ./...` — pass (verified in ticket 145 run).
 - QA: a member with > 60 screenshots in a day → card shows full count, "Load more"
   appends the rest; a second administrator is not marked "You".

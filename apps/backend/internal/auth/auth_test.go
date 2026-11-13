@@ -51,6 +51,33 @@ func TestTokenKindEnforced(t *testing.T) {
 	}
 }
 
+func TestSessionIDCarriedThroughRefresh(t *testing.T) {
+	m := NewManager("test-secret")
+	login, err := m.Issue("u1")
+	if err != nil {
+		t.Fatalf("issue: %v", err)
+	}
+	first, err := m.ParseRefreshInfo(login.RefreshToken)
+	if err != nil || first.Sid == "" || first.UserID != "u1" || first.ExpiresAt.IsZero() {
+		t.Fatalf("parse refresh info: %+v err=%v", first, err)
+	}
+
+	refreshed, err := m.IssueForSession(first.UserID, first.Sid)
+	if err != nil {
+		t.Fatalf("issue for session: %v", err)
+	}
+	second, err := m.ParseRefreshInfo(refreshed.RefreshToken)
+	if err != nil || second.Sid != first.Sid {
+		t.Fatalf("refresh changed session: first=%q second=%q err=%v", first.Sid, second.Sid, err)
+	}
+
+	other, _ := m.Issue("u1")
+	third, _ := m.ParseRefreshInfo(other.RefreshToken)
+	if third.Sid == first.Sid {
+		t.Fatal("a new login reused an existing session id")
+	}
+}
+
 func TestTokenWrongSecretRejected(t *testing.T) {
 	pair, _ := NewManager("secret-a").Issue("u1")
 	if _, err := NewManager("secret-b").ParseAccess(pair.AccessToken); err == nil {
