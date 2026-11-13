@@ -37,6 +37,7 @@
     "next": "Next screenshot",
     "close": "Close",
     "showing": "Showing {{shown}} of {{total}}",
-    "loadMore": "Load {{count}} more"
+    "loadMore": "Load {{count}} more",
+    "open": "Open screenshot from {{time}}"
   }
 }

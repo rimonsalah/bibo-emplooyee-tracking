@@ -37,6 +37,7 @@
     "next": "次のスクリーンショット",
     "close": "閉じる",
     "showing": "{{total}} 件中 {{shown}} 件を表示",
-    "loadMore": "さらに {{count}} 件を読み込む"
+    "loadMore": "さらに {{count}} 件を読み込む",
+    "open": "{{time}} のスクリーンショットを開く"
   }
 }

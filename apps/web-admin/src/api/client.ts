@@ -151,14 +151,19 @@ export async function request<T>(path: string, opts: RequestOpts = {}): Promise<
 
 // Auth-gated image fetch: pulls bytes with the Bearer header and returns an
 // object URL the caller can use as an <img src> (and must revoke later).
-export async function fetchImageObjectUrl(clientUuid: string): Promise<string> {
+// `size: "thumb"` asks for a small cached JPEG (gallery grid); default is full size.
+export async function fetchImageObjectUrl(
+  clientUuid: string,
+  size: "full" | "thumb" = "full",
+): Promise<string> {
   const tok = tokenStore.getAccess();
-  const res = await fetch(buildUrl(`/v1/screenshots/${clientUuid}`), {
-    headers: tok ? { Authorization: `Bearer ${tok}` } : {},
-  });
+  const res = await fetch(
+    buildUrl(`/v1/screenshots/${clientUuid}`, size === "thumb" ? { size: "thumb" } : undefined),
+    { headers: tok ? { Authorization: `Bearer ${tok}` } : {} },
+  );
   if (res.status === 401) {
     const ok = await refreshOnce();
-    if (ok) return fetchImageObjectUrl(clientUuid);
+    if (ok) return fetchImageObjectUrl(clientUuid, size);
     emitLogout();
     throw new ApiError(401, "Session expired.", null);
   }

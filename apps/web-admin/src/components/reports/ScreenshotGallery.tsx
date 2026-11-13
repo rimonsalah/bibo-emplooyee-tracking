@@ -34,13 +34,39 @@ const hhmmss = (ts: number) => {
 };
 
 // One gallery card: real thumbnail when it loads, gradient placeholder before.
+// The thumbnail is only fetched once the card nears the viewport, so opening a
+// day with hundreds of screenshots doesn't download them all at once.
 function Shot({ meta, onOpen }: { meta: ShotMeta; onOpen: () => void }) {
+  const { t } = useTranslation("reports");
   const [url, setUrl] = useState<string | null>(null);
+  const [visible, setVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setVisible(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setVisible(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "300px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!visible) return;
     let alive = true;
     let made: string | null = null;
-    fetchImageObjectUrl(meta.client_uuid)
+    fetchImageObjectUrl(meta.client_uuid, "thumb")
       .then((u) => {
         made = u;
         if (alive) setUrl(u);
@@ -51,10 +77,25 @@ function Shot({ meta, onOpen }: { meta: ShotMeta; onOpen: () => void }) {
       alive = false;
       if (made) URL.revokeObjectURL(made);
     };
-  }, [meta.client_uuid]);
+  }, [meta.client_uuid, visible]);
 
+  // Always openable: the lightbox fetches the full image itself, so a failed or
+  // pending thumbnail doesn't block viewing. Keyboard: Tab + Enter/Space.
   return (
-    <div className={`ad-shot${url ? " ad-shot--clickable" : ""}`} onClick={url ? onOpen : undefined}>
+    <div
+      ref={ref}
+      className="ad-shot ad-shot--clickable"
+      role="button"
+      tabIndex={0}
+      aria-label={t("screenshots.open", { time: fmtTime(meta.ts) })}
+      onClick={onOpen}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
+    >
       <div
         className="ad-shot__img"
         style={url ? { backgroundImage: `url("${url}")` } : { background: gradientFor(meta.app) }}

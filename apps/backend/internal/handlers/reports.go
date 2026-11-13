@@ -3,11 +3,13 @@ package handlers
 import (
 	"errors"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
 	"ctracking/backend/internal/auth"
 	"ctracking/backend/internal/filestore"
+	"ctracking/backend/internal/obs"
 	"ctracking/backend/internal/store"
 
 	"github.com/gin-gonic/gin"
@@ -132,11 +134,24 @@ func (h *ReportsHandler) ScreenshotImage(c *gin.Context) {
 		serverError(c, err)
 		return
 	}
-	f, err := h.files.Open(relPath)
-	if err != nil {
-		// Metadata exists but the file is gone (e.g. cleaned up) — treat as missing.
-		c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
-		return
+	// ?size=thumb serves a small cached JPEG for gallery grids; if it can't be
+	// made (undecodable image), fall back to the original.
+	contentType := "image/webp"
+	var f *os.File
+	if c.Query("size") == "thumb" {
+		if tf, terr := h.files.OpenThumb(relPath); terr == nil {
+			f, contentType = tf, "image/jpeg"
+		} else if !errors.Is(terr, os.ErrNotExist) {
+			obs.Warn("thumbnail failed", "screenshot", clientUUID, "err", terr)
+		}
+	}
+	if f == nil {
+		f, err = h.files.Open(relPath)
+		if err != nil {
+			// Metadata exists but the file is gone (e.g. cleaned up) — treat as missing.
+			c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
+			return
+		}
 	}
 	defer f.Close()
 	fi, err := f.Stat()
@@ -144,7 +159,11 @@ func (h *ReportsHandler) ScreenshotImage(c *gin.Context) {
 		serverError(c, err)
 		return
 	}
-	c.DataFromReader(http.StatusOK, fi.Size(), "image/webp", f, nil)
+	// Screenshots never change once stored: let the browser cache them (private —
+	// only this user's cache, never shared proxies).
+	c.DataFromReader(http.StatusOK, fi.Size(), contentType, f, map[string]string{
+		"Cache-Control": "private, max-age=86400",
+	})
 }
 
 // scope authenticates, validates the :id employee is one the caller owns, and parses

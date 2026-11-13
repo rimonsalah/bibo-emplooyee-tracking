@@ -59,24 +59,46 @@ func (s *Store) Write(businessID, userID string, ts int64, clientUUID string, da
 		_ = os.Remove(tmp)
 		return "", err
 	}
+	// A re-upload replaces the image, so any cached thumbnail is stale.
+	_ = removeIfExists(filepath.Join(s.root, thumbRel(rel)))
 	return rel, nil
 }
 
-// Open opens a stored screenshot by its DB-recorded relative path. The path is
+// abs resolves a DB-recorded relative path to an absolute one. The path is
 // cleaned and confined to the storage root, so a tampered DB value still can't
 // escape it.
-func (s *Store) Open(rel string) (*os.File, error) {
+func (s *Store) abs(rel string) (string, error) {
 	abs := filepath.Join(s.root, filepath.Clean("/"+rel))
 	root := filepath.Clean(s.root) + string(os.PathSeparator)
 	if !hasPrefix(abs, root) {
-		return nil, errors.New("path escapes storage root")
+		return "", errors.New("path escapes storage root")
+	}
+	return abs, nil
+}
+
+// Open opens a stored screenshot by its DB-recorded relative path.
+func (s *Store) Open(rel string) (*os.File, error) {
+	abs, err := s.abs(rel)
+	if err != nil {
+		return nil, err
 	}
 	return os.Open(abs)
 }
 
-// Remove deletes a stored screenshot by relative path. A missing file is not an error.
+// Remove deletes a stored screenshot (and its cached thumbnail) by relative
+// path. A missing file is not an error.
 func (s *Store) Remove(rel string) error {
-	abs := filepath.Join(s.root, filepath.Clean("/"+rel))
+	abs, err := s.abs(rel)
+	if err != nil {
+		return err
+	}
+	if tAbs, err := s.abs(thumbRel(rel)); err == nil {
+		_ = removeIfExists(tAbs)
+	}
+	return removeIfExists(abs)
+}
+
+func removeIfExists(abs string) error {
 	err := os.Remove(abs)
 	if errors.Is(err, os.ErrNotExist) {
 		return nil

@@ -37,6 +37,7 @@
     "next": "Ảnh chụp sau",
     "close": "Đóng",
     "showing": "Đang hiển thị {{shown}}/{{total}}",
-    "loadMore": "Tải thêm {{count}}"
+    "loadMore": "Tải thêm {{count}}",
+    "open": "Mở ảnh chụp màn hình lúc {{time}}"
   }
 }

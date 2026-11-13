@@ -37,6 +37,7 @@
     "next": "Screenshot berikutnya",
     "close": "Tutup",
     "showing": "Menampilkan {{shown}} dari {{total}}",
-    "loadMore": "Muat {{count}} lagi"
+    "loadMore": "Muat {{count}} lagi",
+    "open": "Buka tangkapan layar {{time}}"
   }
 }

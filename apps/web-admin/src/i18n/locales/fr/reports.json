@@ -37,6 +37,7 @@
     "next": "Capture suivante",
     "close": "Fermer",
     "showing": "{{shown}} sur {{total}} affichées",
-    "loadMore": "Charger {{count}} de plus"
+    "loadMore": "Charger {{count}} de plus",
+    "open": "Ouvrir la capture de {{time}}"
   }
 }
