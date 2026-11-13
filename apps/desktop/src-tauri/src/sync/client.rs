@@ -14,6 +14,16 @@ use serde::{Deserialize, Serialize};
 use super::auth::{AuthState, Session};
 use crate::storage::{PendingActivity, PendingBrowser, PendingKeystroke, PendingScreenshot};
 
+/// User-Agent for backend calls, e.g. `BiBoTracking-Desktop/1.5.1 (windows)`.
+/// The web admin's Login history uses it to label desktop sign-ins.
+fn user_agent() -> String {
+    format!(
+        "BiBoTracking-Desktop/{} ({})",
+        env!("CARGO_PKG_VERSION"),
+        std::env::consts::OS
+    )
+}
+
 /// A backend client bound to a base URL and the shared auth state.
 #[derive(Clone)]
 pub struct BackendClient {
@@ -109,6 +119,7 @@ struct PrivacyAppsResp {
 /// `trackers::DEFAULT_PRIVACY_APPS` on any error.
 pub async fn fetch_privacy_apps(base_url: &str) -> Result<Vec<PrivacyAppCategory>, String> {
     let http = reqwest::Client::builder()
+        .user_agent(user_agent())
         .timeout(std::time::Duration::from_secs(15))
         .build()
         .unwrap_or_default();
@@ -162,6 +173,7 @@ struct ScreenshotResp {
 impl BackendClient {
     pub fn new(base_url: String, auth: Arc<AuthState>) -> Self {
         let http = reqwest::Client::builder()
+            .user_agent(user_agent())
             .timeout(std::time::Duration::from_secs(30))
             .build()
             .unwrap_or_default();
