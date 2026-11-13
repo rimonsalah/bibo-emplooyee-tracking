@@ -2,99 +2,99 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://kairo.example.com/</loc>
-      <xhtml:link rel="alternate" hreflang="en" href="https://kairo.example.com/" />
-      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://kairo.example.com/zh/" />
-      <xhtml:link rel="alternate" hreflang="ja" href="https://kairo.example.com/ja/" />
-      <xhtml:link rel="alternate" hreflang="vi" href="https://kairo.example.com/vi/" />
-      <xhtml:link rel="alternate" hreflang="id" href="https://kairo.example.com/id/" />
-      <xhtml:link rel="alternate" hreflang="fr" href="https://kairo.example.com/fr/" />
-      <xhtml:link rel="alternate" hreflang="es" href="https://kairo.example.com/es/" />
-      <xhtml:link rel="alternate" hreflang="x-default" href="https://kairo.example.com/" />
+    <loc>https://me.linkosolution.com/</loc>
+      <xhtml:link rel="alternate" hreflang="en" href="https://me.linkosolution.com/" />
+      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://me.linkosolution.com/zh/" />
+      <xhtml:link rel="alternate" hreflang="ja" href="https://me.linkosolution.com/ja/" />
+      <xhtml:link rel="alternate" hreflang="vi" href="https://me.linkosolution.com/vi/" />
+      <xhtml:link rel="alternate" hreflang="id" href="https://me.linkosolution.com/id/" />
+      <xhtml:link rel="alternate" hreflang="fr" href="https://me.linkosolution.com/fr/" />
+      <xhtml:link rel="alternate" hreflang="es" href="https://me.linkosolution.com/es/" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://me.linkosolution.com/" />
     <lastmod>2026-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://kairo.example.com/zh/</loc>
-      <xhtml:link rel="alternate" hreflang="en" href="https://kairo.example.com/" />
-      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://kairo.example.com/zh/" />
-      <xhtml:link rel="alternate" hreflang="ja" href="https://kairo.example.com/ja/" />
-      <xhtml:link rel="alternate" hreflang="vi" href="https://kairo.example.com/vi/" />
-      <xhtml:link rel="alternate" hreflang="id" href="https://kairo.example.com/id/" />
-      <xhtml:link rel="alternate" hreflang="fr" href="https://kairo.example.com/fr/" />
-      <xhtml:link rel="alternate" hreflang="es" href="https://kairo.example.com/es/" />
-      <xhtml:link rel="alternate" hreflang="x-default" href="https://kairo.example.com/" />
+    <loc>https://me.linkosolution.com/zh/</loc>
+      <xhtml:link rel="alternate" hreflang="en" href="https://me.linkosolution.com/" />
+      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://me.linkosolution.com/zh/" />
+      <xhtml:link rel="alternate" hreflang="ja" href="https://me.linkosolution.com/ja/" />
+      <xhtml:link rel="alternate" hreflang="vi" href="https://me.linkosolution.com/vi/" />
+      <xhtml:link rel="alternate" hreflang="id" href="https://me.linkosolution.com/id/" />
+      <xhtml:link rel="alternate" hreflang="fr" href="https://me.linkosolution.com/fr/" />
+      <xhtml:link rel="alternate" hreflang="es" href="https://me.linkosolution.com/es/" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://me.linkosolution.com/" />
     <lastmod>2026-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://kairo.example.com/ja/</loc>
-      <xhtml:link rel="alternate" hreflang="en" href="https://kairo.example.com/" />
-      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://kairo.example.com/zh/" />
-      <xhtml:link rel="alternate" hreflang="ja" href="https://kairo.example.com/ja/" />
-      <xhtml:link rel="alternate" hreflang="vi" href="https://kairo.example.com/vi/" />
-      <xhtml:link rel="alternate" hreflang="id" href="https://kairo.example.com/id/" />
-      <xhtml:link rel="alternate" hreflang="fr" href="https://kairo.example.com/fr/" />
-      <xhtml:link rel="alternate" hreflang="es" href="https://kairo.example.com/es/" />
-      <xhtml:link rel="alternate" hreflang="x-default" href="https://kairo.example.com/" />
+    <loc>https://me.linkosolution.com/ja/</loc>
+      <xhtml:link rel="alternate" hreflang="en" href="https://me.linkosolution.com/" />
+      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://me.linkosolution.com/zh/" />
+      <xhtml:link rel="alternate" hreflang="ja" href="https://me.linkosolution.com/ja/" />
+      <xhtml:link rel="alternate" hreflang="vi" href="https://me.linkosolution.com/vi/" />
+      <xhtml:link rel="alternate" hreflang="id" href="https://me.linkosolution.com/id/" />
+      <xhtml:link rel="alternate" hreflang="fr" href="https://me.linkosolution.com/fr/" />
+      <xhtml:link rel="alternate" hreflang="es" href="https://me.linkosolution.com/es/" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://me.linkosolution.com/" />
     <lastmod>2026-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://kairo.example.com/vi/</loc>
-      <xhtml:link rel="alternate" hreflang="en" href="https://kairo.example.com/" />
-      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://kairo.example.com/zh/" />
-      <xhtml:link rel="alternate" hreflang="ja" href="https://kairo.example.com/ja/" />
-      <xhtml:link rel="alternate" hreflang="vi" href="https://kairo.example.com/vi/" />
-      <xhtml:link rel="alternate" hreflang="id" href="https://kairo.example.com/id/" />
-      <xhtml:link rel="alternate" hreflang="fr" href="https://kairo.example.com/fr/" />
-      <xhtml:link rel="alternate" hreflang="es" href="https://kairo.example.com/es/" />
-      <xhtml:link rel="alternate" hreflang="x-default" href="https://kairo.example.com/" />
+    <loc>https://me.linkosolution.com/vi/</loc>
+      <xhtml:link rel="alternate" hreflang="en" href="https://me.linkosolution.com/" />
+      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://me.linkosolution.com/zh/" />
+      <xhtml:link rel="alternate" hreflang="ja" href="https://me.linkosolution.com/ja/" />
+      <xhtml:link rel="alternate" hreflang="vi" href="https://me.linkosolution.com/vi/" />
+      <xhtml:link rel="alternate" hreflang="id" href="https://me.linkosolution.com/id/" />
+      <xhtml:link rel="alternate" hreflang="fr" href="https://me.linkosolution.com/fr/" />
+      <xhtml:link rel="alternate" hreflang="es" href="https://me.linkosolution.com/es/" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://me.linkosolution.com/" />
     <lastmod>2026-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://kairo.example.com/id/</loc>
-      <xhtml:link rel="alternate" hreflang="en" href="https://kairo.example.com/" />
-      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://kairo.example.com/zh/" />
-      <xhtml:link rel="alternate" hreflang="ja" href="https://kairo.example.com/ja/" />
-      <xhtml:link rel="alternate" hreflang="vi" href="https://kairo.example.com/vi/" />
-      <xhtml:link rel="alternate" hreflang="id" href="https://kairo.example.com/id/" />
-      <xhtml:link rel="alternate" hreflang="fr" href="https://kairo.example.com/fr/" />
-      <xhtml:link rel="alternate" hreflang="es" href="https://kairo.example.com/es/" />
-      <xhtml:link rel="alternate" hreflang="x-default" href="https://kairo.example.com/" />
+    <loc>https://me.linkosolution.com/id/</loc>
+      <xhtml:link rel="alternate" hreflang="en" href="https://me.linkosolution.com/" />
+      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://me.linkosolution.com/zh/" />
+      <xhtml:link rel="alternate" hreflang="ja" href="https://me.linkosolution.com/ja/" />
+      <xhtml:link rel="alternate" hreflang="vi" href="https://me.linkosolution.com/vi/" />
+      <xhtml:link rel="alternate" hreflang="id" href="https://me.linkosolution.com/id/" />
+      <xhtml:link rel="alternate" hreflang="fr" href="https://me.linkosolution.com/fr/" />
+      <xhtml:link rel="alternate" hreflang="es" href="https://me.linkosolution.com/es/" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://me.linkosolution.com/" />
     <lastmod>2026-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://kairo.example.com/fr/</loc>
-      <xhtml:link rel="alternate" hreflang="en" href="https://kairo.example.com/" />
-      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://kairo.example.com/zh/" />
-      <xhtml:link rel="alternate" hreflang="ja" href="https://kairo.example.com/ja/" />
-      <xhtml:link rel="alternate" hreflang="vi" href="https://kairo.example.com/vi/" />
-      <xhtml:link rel="alternate" hreflang="id" href="https://kairo.example.com/id/" />
-      <xhtml:link rel="alternate" hreflang="fr" href="https://kairo.example.com/fr/" />
-      <xhtml:link rel="alternate" hreflang="es" href="https://kairo.example.com/es/" />
-      <xhtml:link rel="alternate" hreflang="x-default" href="https://kairo.example.com/" />
+    <loc>https://me.linkosolution.com/fr/</loc>
+      <xhtml:link rel="alternate" hreflang="en" href="https://me.linkosolution.com/" />
+      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://me.linkosolution.com/zh/" />
+      <xhtml:link rel="alternate" hreflang="ja" href="https://me.linkosolution.com/ja/" />
+      <xhtml:link rel="alternate" hreflang="vi" href="https://me.linkosolution.com/vi/" />
+      <xhtml:link rel="alternate" hreflang="id" href="https://me.linkosolution.com/id/" />
+      <xhtml:link rel="alternate" hreflang="fr" href="https://me.linkosolution.com/fr/" />
+      <xhtml:link rel="alternate" hreflang="es" href="https://me.linkosolution.com/es/" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://me.linkosolution.com/" />
     <lastmod>2026-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://kairo.example.com/es/</loc>
-      <xhtml:link rel="alternate" hreflang="en" href="https://kairo.example.com/" />
-      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://kairo.example.com/zh/" />
-      <xhtml:link rel="alternate" hreflang="ja" href="https://kairo.example.com/ja/" />
-      <xhtml:link rel="alternate" hreflang="vi" href="https://kairo.example.com/vi/" />
-      <xhtml:link rel="alternate" hreflang="id" href="https://kairo.example.com/id/" />
-      <xhtml:link rel="alternate" hreflang="fr" href="https://kairo.example.com/fr/" />
-      <xhtml:link rel="alternate" hreflang="es" href="https://kairo.example.com/es/" />
-      <xhtml:link rel="alternate" hreflang="x-default" href="https://kairo.example.com/" />
+    <loc>https://me.linkosolution.com/es/</loc>
+      <xhtml:link rel="alternate" hreflang="en" href="https://me.linkosolution.com/" />
+      <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://me.linkosolution.com/zh/" />
+      <xhtml:link rel="alternate" hreflang="ja" href="https://me.linkosolution.com/ja/" />
+      <xhtml:link rel="alternate" hreflang="vi" href="https://me.linkosolution.com/vi/" />
+      <xhtml:link rel="alternate" hreflang="id" href="https://me.linkosolution.com/id/" />
+      <xhtml:link rel="alternate" hreflang="fr" href="https://me.linkosolution.com/fr/" />
+      <xhtml:link rel="alternate" hreflang="es" href="https://me.linkosolution.com/es/" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://me.linkosolution.com/" />
     <lastmod>2026-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>

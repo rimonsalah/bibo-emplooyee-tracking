@@ -1,0 +1,14 @@
+.git
+**/node_modules
+**/dist
+**/target
+apps/desktop/src-tauri/gen
+marketing/site-prod
+marketing/site-staging
+deploy
+*.patch
+**/.env
+**/.env.*
+!**/.env.example
+!apps/web-admin/.env.prod
+!apps/web-admin/.env.staging

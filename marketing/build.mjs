@@ -31,7 +31,7 @@ const SRC = join(ROOT, "src"); // template + i18n sources (not served)
 //   SITE_BASE_URL=https://your-host SITE_OUT=site node marketing/build.mjs
 // Kairo: set your public domain in SITE_DOMAIN (or SITE_BASE_URL at build time).
 // Canonical URLs, hreflang and the sitemap are built from it.
-const SITE_DOMAIN = "https://kairo.example.com"; // TODO: your marketing domain
+const SITE_DOMAIN = "https://me.linkosolution.com";
 const ENVS = {
   default: {
     base: SITE_DOMAIN,

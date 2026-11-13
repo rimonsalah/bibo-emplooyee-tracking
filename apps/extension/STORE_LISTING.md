@@ -37,5 +37,5 @@ HOW IT WORKS
 2. Add this extension to the browser.
 3. The extension automatically pairs with the local app and begins recording time on page — all stored locally.
 
-Privacy Policy: https://kairo.example.com/privacy/  (TODO: your domain)
+Privacy Policy: https://me.linkosolution.com/privacy/
 ```

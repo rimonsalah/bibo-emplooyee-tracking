@@ -19,7 +19,10 @@ services:
       start_period: 10s
 
   backend:
-    build: .
+    # All-in-one image (landing page + /admin + API): repo-root Dockerfile.
+    build:
+      context: ../..
+      dockerfile: Dockerfile
     restart: unless-stopped
 
     depends_on:
@@ -31,14 +34,17 @@ services:
       DATABASE_URL: "postgres://ctracking:${POSTGRES_PASSWORD}@db:5432/ctracking?sslmode=disable"
       JWT_SECRET: "${JWT_SECRET}"
       STORAGE_DIR: "/app/storage"
-      WEB_ADMIN_ORIGIN: "https://monitor.linkosolution.com"
+      STATIC_DIR: "/app/static"
+      WEB_ADMIN_ORIGIN: "https://me.linkosolution.com"
 
     expose:
       - "8080"
 
     volumes:
       - screenshots:/app/storage
+      - downloads:/app/static/download # installers + extension zip
 
 volumes:
   pgdata:
   screenshots:
+  downloads:
