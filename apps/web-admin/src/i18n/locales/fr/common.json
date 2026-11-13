@@ -4,6 +4,8 @@
   "nav": {
     "dashboard": "Tableau de bord",
     "employees": "Employés",
+    "administrators": "Administrateurs",
+    "loginHistory": "Historique des connexions",
     "settings": "Paramètres"
   },
   "actions": {

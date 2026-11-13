@@ -4,6 +4,8 @@
   "nav": {
     "dashboard": "Dasbor",
     "employees": "Karyawan",
+    "administrators": "Administrator",
+    "loginHistory": "Riwayat login",
     "settings": "Pengaturan"
   },
   "actions": {

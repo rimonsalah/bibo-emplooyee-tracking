@@ -82,5 +82,60 @@
   },
   "account": {
     "title": "Akun"
+  },
+  "admins": {
+    "title": "Administrator",
+    "subtitle": "Beri manajer tepercaya akses terpisah ke {{name}}.",
+    "thisWorkspace": "ruang kerja ini",
+    "add": "Tambah administrator",
+    "cancel": "Batal",
+    "onlyPrimary": "Hanya pemilik utama yang dapat menambah atau menghapus administrator. Anda tetap memiliki akses penuh ke {{members}}, laporan, dan pengaturan.",
+    "formTitle": "Administrator baru",
+    "fullName": "Nama lengkap",
+    "login": "Email atau nama pengguna",
+    "tempPassword": "Kata sandi sementara",
+    "create": "Buat administrator",
+    "creating": "Membuat…",
+    "loading": "Memuat administrator…",
+    "noWorkspace": "Buat atau pilih ruang kerja terlebih dahulu.",
+    "table": {
+      "name": "Nama",
+      "login": "Login",
+      "access": "Akses"
+    },
+    "primary": "Pemilik utama",
+    "admin": "Administrator",
+    "remove": "Hapus",
+    "created": "Administrator dibuat. Bagikan login dan kata sandi sementara dengan aman.",
+    "removed": "Akses administrator dihapus.",
+    "errorLoad": "Tidak dapat memuat administrator.",
+    "errorCreate": "Tidak dapat membuat administrator.",
+    "errorRemove": "Tidak dapat menghapus administrator.",
+    "confirmTitle": "Hapus administrator?",
+    "confirmBody": "{{name}} akan kehilangan akses ke {{workspace}}. Akunnya tidak dihapus.",
+    "confirmRemove": "Hapus akses"
+  },
+  "loginHistory": {
+    "title": "Riwayat login",
+    "subtitle": "Login berhasil terbaru untuk {{name}}.",
+    "locationNote": "Lokasi bersifat perkiraan dan bergantung pada proxy Anda yang menyediakan geolokasi IP. Alamat IP hanya dicatat untuk login yang berhasil.",
+    "loading": "Memuat riwayat login…",
+    "empty": "Belum ada catatan login. Login berhasil yang baru akan muncul di sini.",
+    "errorLoad": "Tidak dapat memuat riwayat login.",
+    "table": {
+      "user": "Pengguna",
+      "role": "Peran",
+      "time": "Tanggal dan waktu",
+      "ip": "Alamat IP",
+      "location": "Lokasi",
+      "device": "Perangkat"
+    },
+    "roleAdmin": "Administrator",
+    "locationUnknown": "Tidak tersedia",
+    "device": {
+      "unknown": "Perangkat tidak dikenal",
+      "desktop": "Aplikasi desktop",
+      "browser": "Browser web"
+    }
   }
 }

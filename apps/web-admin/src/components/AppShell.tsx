@@ -7,6 +7,7 @@ import { useBusinesses } from "../useBusinesses";
 import { memberTerms } from "../terms";
 import { DetailHeaderContext } from "../detailHeader";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { Notice } from "./ui";
 
 /** Brand mark — violet gradient tile with the pulse glyph (matches the auth logo). */
 function RailLogo() {
@@ -280,15 +281,15 @@ export function AppShell() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { mode, setMode } = useTheme();
-  const { selected } = useBusinesses();
+  const { selected, error: bizError, reload: reloadBusinesses } = useBusinesses();
   const terms = memberTerms(selected?.kind);
   const location = useLocation();
 
   const NAV = [
     { to: "/", label: t("nav.dashboard"), end: true, icon: <DashboardIcon /> },
     { to: "/employees", label: terms.many, end: false, icon: <MembersIcon /> },
-    { to: "/administrators", label: "Administrators", end: false, icon: <AdminIcon /> },
-    { to: "/login-history", label: "Login history", end: false, icon: <LoginHistoryIcon /> },
+    { to: "/administrators", label: t("nav.administrators"), end: false, icon: <AdminIcon /> },
+    { to: "/login-history", label: t("nav.loginHistory"), end: false, icon: <LoginHistoryIcon /> },
     { to: "/settings", label: t("nav.settings"), end: false, icon: <SettingsIcon /> },
   ];
 
@@ -360,6 +361,21 @@ export function AppShell() {
 
         <div className={`content${location.pathname === "/" ? " content--flat" : ""}`}>
           <DetailHeaderContext.Provider value={detailHeader}>
+            {/* Without this, a failed load looks like "no businesses yet". */}
+            {bizError && (
+              <div className="ad-wrap" style={{ paddingTop: 16 }}>
+                <Notice kind="danger">
+                  {t("dashboard.errorBusinesses", { ns: "dashboard" })}{" "}
+                  <button
+                    type="button"
+                    className="bibo-btn bibo-btn--secondary bibo-btn--sm"
+                    onClick={() => void reloadBusinesses()}
+                  >
+                    {t("dashboard.retry", { ns: "dashboard" })}
+                  </button>
+                </Notice>
+              </div>
+            )}
             <Outlet />
           </DetailHeaderContext.Provider>
         </div>

@@ -83,5 +83,60 @@
   },
   "account": {
     "title": "Compte"
+  },
+  "admins": {
+    "title": "Administrateurs",
+    "subtitle": "Donnez à des responsables de confiance un accès distinct à {{name}}.",
+    "thisWorkspace": "cet espace de travail",
+    "add": "Ajouter un administrateur",
+    "cancel": "Annuler",
+    "onlyPrimary": "Seul le propriétaire principal peut ajouter ou retirer des administrateurs. Vous gardez un accès complet aux {{members}}, aux rapports et aux paramètres.",
+    "formTitle": "Nouvel administrateur",
+    "fullName": "Nom complet",
+    "login": "E-mail ou nom d'utilisateur",
+    "tempPassword": "Mot de passe temporaire",
+    "create": "Créer l'administrateur",
+    "creating": "Création…",
+    "loading": "Chargement des administrateurs…",
+    "noWorkspace": "Créez ou sélectionnez d'abord un espace de travail.",
+    "table": {
+      "name": "Nom",
+      "login": "Identifiant",
+      "access": "Accès"
+    },
+    "primary": "Propriétaire principal",
+    "admin": "Administrateur",
+    "remove": "Retirer",
+    "created": "Administrateur créé. Transmettez l'identifiant et le mot de passe temporaire de façon sécurisée.",
+    "removed": "Accès administrateur retiré.",
+    "errorLoad": "Impossible de charger les administrateurs.",
+    "errorCreate": "Impossible de créer l'administrateur.",
+    "errorRemove": "Impossible de retirer l'administrateur.",
+    "confirmTitle": "Retirer l'administrateur ?",
+    "confirmBody": "{{name}} perdra l'accès à {{workspace}}. Son compte n'est pas supprimé.",
+    "confirmRemove": "Retirer l'accès"
+  },
+  "loginHistory": {
+    "title": "Historique des connexions",
+    "subtitle": "Connexions réussies récentes pour {{name}}.",
+    "locationNote": "Les emplacements sont approximatifs et dépendent de la géolocalisation IP fournie par votre proxy. Les adresses IP ne sont enregistrées que pour les connexions réussies.",
+    "loading": "Chargement de l'historique…",
+    "empty": "Aucune connexion enregistrée pour l'instant. Les nouvelles connexions réussies apparaîtront ici.",
+    "errorLoad": "Impossible de charger l'historique des connexions.",
+    "table": {
+      "user": "Utilisateur",
+      "role": "Rôle",
+      "time": "Date et heure",
+      "ip": "Adresse IP",
+      "location": "Emplacement",
+      "device": "Appareil"
+    },
+    "roleAdmin": "Administrateur",
+    "locationUnknown": "Non disponible",
+    "device": {
+      "unknown": "Appareil inconnu",
+      "desktop": "Application de bureau",
+      "browser": "Navigateur web"
+    }
   }
 }

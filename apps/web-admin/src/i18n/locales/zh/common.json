@@ -4,6 +4,8 @@
   "nav": {
     "dashboard": "仪表板",
     "employees": "员工",
+    "administrators": "管理员",
+    "loginHistory": "登录记录",
     "settings": "设置"
   },
   "actions": {

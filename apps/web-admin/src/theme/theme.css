@@ -2886,6 +2886,19 @@ select.input:focus,
   background: var(--info-soft);
   vertical-align: middle;
 }
+.ad-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--text-muted) 14%, transparent);
+}
+.ad-badge--primary {
+  color: var(--violet);
+  background: color-mix(in srgb, var(--violet) 14%, transparent);
+}
 .ad-login,
 .ad-relt {
   color: var(--text-muted);
@@ -3345,6 +3358,10 @@ select.input:focus,
   display: block;
   width: 100%;
   cursor: default;
+}
+.ad-shot:focus-visible {
+  outline: 2px solid var(--violet);
+  outline-offset: 2px;
 }
 .ad-shot--clickable {
   cursor: pointer;

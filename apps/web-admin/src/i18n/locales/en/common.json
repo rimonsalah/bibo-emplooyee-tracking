@@ -4,6 +4,8 @@
   "nav": {
     "dashboard": "Dashboard",
     "employees": "Employees",
+    "administrators": "Administrators",
+    "loginHistory": "Login history",
     "settings": "Settings"
   },
   "actions": {

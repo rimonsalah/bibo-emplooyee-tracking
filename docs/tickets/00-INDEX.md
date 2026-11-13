@@ -218,3 +218,5 @@ packaged for the Web Store, and three production releases (1.2.0 → 1.3.0 → 1
 143. web-admin report accuracy: remove fake trend badges, "You" only for self, screenshot total + paging — **Done (QA pending)**
 144. web-admin Dashboard: remove placeholder sparklines, "Active today" = recorded activity today — **Done (QA pending)**
 145. Server-side logout: session id (`sid`) in JWTs, `POST /v1/auth/logout`, revoked-session denylist (migration 00012) — **Done (QA pending)**
+146. Screenshot thumbnails (`?size=thumb`, cached JPEG) + lazy-loading gallery + private image caching — **Done (QA pending)**
+147. web-admin: localize Administrators/Login history, admin modals, stale-response guards, business-load error, member not-found, desktop User-Agent, shared member helpers — **Done (QA pending)**

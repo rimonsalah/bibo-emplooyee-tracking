@@ -22,7 +22,9 @@
     "vsYesterday": "so với hôm qua",
     "ofMembers": "trên {{count}} {{members}}",
     "todayLabel": "hôm nay",
-    "newTeam": "Nhóm mới"
+    "newTeam": "Nhóm mới",
+    "errorBusinesses": "Không thể tải không gian làm việc của bạn.",
+    "retry": "Thử lại"
   },
   "employees": {
     "newBusiness": "Doanh nghiệp mới",
@@ -88,6 +90,7 @@
       "screenshots": "Ảnh chụp màn hình"
     },
     "singleDay": "Một ngày",
-    "dateRange": "Khoảng ngày"
+    "dateRange": "Khoảng ngày",
+    "notFound": "Không tìm thấy {{member}} này trong {{org}} đã chọn."
   }
 }

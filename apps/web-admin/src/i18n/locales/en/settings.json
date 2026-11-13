@@ -90,5 +90,60 @@
     "title": "Account",
     "email": "Email",
     "displayName": "Display name"
+  },
+  "admins": {
+    "title": "Administrators",
+    "subtitle": "Give trusted managers separate access to {{name}}.",
+    "thisWorkspace": "this workspace",
+    "add": "Add administrator",
+    "cancel": "Cancel",
+    "onlyPrimary": "Only the primary owner can add or remove administrators. You still have full access to {{members}}, reports, and settings.",
+    "formTitle": "New administrator",
+    "fullName": "Full name",
+    "login": "Email or username",
+    "tempPassword": "Temporary password",
+    "create": "Create administrator",
+    "creating": "Creating…",
+    "loading": "Loading administrators…",
+    "noWorkspace": "Create or select a workspace first.",
+    "table": {
+      "name": "Name",
+      "login": "Login",
+      "access": "Access"
+    },
+    "primary": "Primary owner",
+    "admin": "Administrator",
+    "remove": "Remove",
+    "created": "Administrator created. Share the login and temporary password securely.",
+    "removed": "Administrator access removed.",
+    "errorLoad": "Could not load administrators.",
+    "errorCreate": "Could not create administrator.",
+    "errorRemove": "Could not remove administrator.",
+    "confirmTitle": "Remove administrator?",
+    "confirmBody": "{{name}} will lose access to {{workspace}}. Their account is not deleted.",
+    "confirmRemove": "Remove access"
+  },
+  "loginHistory": {
+    "title": "Login history",
+    "subtitle": "Recent successful logins for {{name}}.",
+    "locationNote": "Locations are approximate and depend on your proxy providing IP geolocation. IP addresses are recorded for successful logins only.",
+    "loading": "Loading login history…",
+    "empty": "No login records yet. New successful logins will appear here.",
+    "errorLoad": "Could not load login history.",
+    "table": {
+      "user": "User",
+      "role": "Role",
+      "time": "Date and time",
+      "ip": "IP address",
+      "location": "Location",
+      "device": "Device"
+    },
+    "roleAdmin": "Administrator",
+    "locationUnknown": "Not available",
+    "device": {
+      "unknown": "Unknown device",
+      "desktop": "Desktop app",
+      "browser": "Web browser"
+    }
   }
 }

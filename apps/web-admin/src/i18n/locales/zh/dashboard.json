@@ -22,7 +22,9 @@
     "vsYesterday": "较昨日",
     "ofMembers": "共 {{count}} 名{{members}}",
     "todayLabel": "今日",
-    "newTeam": "新建团队"
+    "newTeam": "新建团队",
+    "errorBusinesses": "无法加载你的工作区。",
+    "retry": "重试"
   },
   "employees": {
     "newBusiness": "新建企业",
@@ -88,6 +90,7 @@
       "screenshots": "截图"
     },
     "singleDay": "单日",
-    "dateRange": "日期范围"
+    "dateRange": "日期范围",
+    "notFound": "在所选{{org}}中找不到该{{member}}。"
   }
 }

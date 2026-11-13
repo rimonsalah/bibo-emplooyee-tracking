@@ -82,5 +82,60 @@
   },
   "account": {
     "title": "アカウント"
+  },
+  "admins": {
+    "title": "管理者",
+    "subtitle": "信頼できるマネージャーに {{name}} への個別のアクセス権を付与します。",
+    "thisWorkspace": "このワークスペース",
+    "add": "管理者を追加",
+    "cancel": "キャンセル",
+    "onlyPrimary": "管理者を追加・削除できるのはメインのオーナーのみです。{{members}}、レポート、設定には引き続きフルアクセスできます。",
+    "formTitle": "新しい管理者",
+    "fullName": "氏名",
+    "login": "メールアドレスまたはユーザー名",
+    "tempPassword": "仮パスワード",
+    "create": "管理者を作成",
+    "creating": "作成中…",
+    "loading": "管理者を読み込み中…",
+    "noWorkspace": "先にワークスペースを作成または選択してください。",
+    "table": {
+      "name": "名前",
+      "login": "ログイン",
+      "access": "権限"
+    },
+    "primary": "メインのオーナー",
+    "admin": "管理者",
+    "remove": "削除",
+    "created": "管理者を作成しました。ログイン情報と仮パスワードは安全な方法で共有してください。",
+    "removed": "管理者のアクセス権を削除しました。",
+    "errorLoad": "管理者を読み込めませんでした。",
+    "errorCreate": "管理者を作成できませんでした。",
+    "errorRemove": "管理者を削除できませんでした。",
+    "confirmTitle": "管理者を削除しますか？",
+    "confirmBody": "{{name}} は {{workspace}} にアクセスできなくなります。アカウント自体は削除されません。",
+    "confirmRemove": "アクセス権を削除"
+  },
+  "loginHistory": {
+    "title": "ログイン履歴",
+    "subtitle": "{{name}} の最近のログイン成功履歴です。",
+    "locationNote": "位置情報はおおよそのもので、プロキシが IP 位置情報を提供しているかによります。IP アドレスはログイン成功時のみ記録されます。",
+    "loading": "ログイン履歴を読み込み中…",
+    "empty": "ログイン記録はまだありません。新しいログインがここに表示されます。",
+    "errorLoad": "ログイン履歴を読み込めませんでした。",
+    "table": {
+      "user": "ユーザー",
+      "role": "役割",
+      "time": "日時",
+      "ip": "IP アドレス",
+      "location": "場所",
+      "device": "デバイス"
+    },
+    "roleAdmin": "管理者",
+    "locationUnknown": "不明",
+    "device": {
+      "unknown": "不明なデバイス",
+      "desktop": "デスクトップアプリ",
+      "browser": "Web ブラウザ"
+    }
   }
 }

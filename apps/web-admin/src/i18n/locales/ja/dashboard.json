@@ -22,7 +22,9 @@
     "vsYesterday": "前日比",
     "ofMembers": "{{count}} 名の{{members}}中",
     "todayLabel": "本日",
-    "newTeam": "新しいチーム"
+    "newTeam": "新しいチーム",
+    "errorBusinesses": "ワークスペースを読み込めませんでした。",
+    "retry": "再試行"
   },
   "employees": {
     "newBusiness": "新規ビジネス",
@@ -88,6 +90,7 @@
       "screenshots": "スクリーンショット"
     },
     "singleDay": "単日",
-    "dateRange": "期間"
+    "dateRange": "期間",
+    "notFound": "選択中の{{org}}にこの{{member}}は見つかりませんでした。"
   }
 }

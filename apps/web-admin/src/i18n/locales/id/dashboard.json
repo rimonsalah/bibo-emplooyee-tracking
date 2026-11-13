@@ -22,7 +22,9 @@
     "vsYesterday": "vs kemarin",
     "ofMembers": "dari {{count}} {{members}}",
     "todayLabel": "hari ini",
-    "newTeam": "Tim baru"
+    "newTeam": "Tim baru",
+    "errorBusinesses": "Tidak dapat memuat ruang kerja Anda.",
+    "retry": "Coba lagi"
   },
   "employees": {
     "newBusiness": "Bisnis baru",
@@ -88,6 +90,7 @@
       "screenshots": "Tangkapan layar"
     },
     "singleDay": "Satu hari",
-    "dateRange": "Rentang tanggal"
+    "dateRange": "Rentang tanggal",
+    "notFound": "{{member}} ini tidak ditemukan di {{org}} yang dipilih."
   }
 }

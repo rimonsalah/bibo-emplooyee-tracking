@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -20,6 +20,7 @@ import { BrowserPanel } from "../components/reports/BrowserPanel";
 import { KeystrokePanel } from "../components/reports/KeystrokePanel";
 import { ScreenshotGallery } from "../components/reports/ScreenshotGallery";
 import { Notice, Spinner } from "../components/ui";
+import { IconCamera, IconClock, StatCard, initials, memberStatus, svg } from "../components/member";
 import { dayRangeToUnix, fmtDuration, isoDate } from "../format";
 import { useBusinesses } from "../useBusinesses";
 import { memberTerms } from "../terms";
@@ -31,56 +32,11 @@ const TABS: Tab[] = ["activity", "keystrokes", "browser", "screenshots"];
 // Screenshots per request (backend caps at 200). More load on demand.
 const SHOTS_PAGE = 60;
 
-// ── inline icons (no icon dependency in web-admin) ───────────────────
-const svg = (children: ReactNode) => (
-  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-    {children}
-  </svg>
-);
+// ── page-specific icons ──────────────────────────────────────────────
 const IconChevron = svg(<path d="m9 18 6-6-6-6" />);
 const IconCalendar = svg(<><path d="M8 2v4" /><path d="M16 2v4" /><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" /></>);
-const IconClock = svg(<><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></>);
 const IconAppWindow = svg(<><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M10 4v4" /><path d="M2 8h20" /><path d="M6 4v4" /></>);
 const IconKeyboard = svg(<><path d="M10 8h.01" /><path d="M12 12h.01" /><path d="M14 8h.01" /><path d="M16 12h.01" /><path d="M18 8h.01" /><path d="M6 8h.01" /><path d="M7 16h10" /><path d="M8 12h.01" /><rect width="20" height="16" x="2" y="4" rx="2" /></>);
-const IconCamera = svg(<><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /><circle cx="12" cy="13" r="3" /></>);
-const initials = (name: string) =>
-  name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join("") || "?";
-
-type Status = "active" | "idle" | "offline";
-function memberStatus(lastSeen: number | null): Status {
-  if (!lastSeen) return "offline";
-  const ageS = Date.now() / 1000 - lastSeen;
-  if (ageS < 5 * 60) return "active";
-  if (ageS < 30 * 60) return "idle";
-  return "offline";
-}
-
-// ── detail stat card (no sparkline — matches the detail layout) ──────
-// No trend badge: there is no period-over-period data for a member yet, and a
-// made-up "+12%" is worse than none. Add a real `delta` once the API has it.
-function StatCard(props: {
-  icon: ReactNode;
-  label: string;
-  value: ReactNode;
-  focal?: boolean;
-  sub?: string;
-}) {
-  const { icon, label, value, focal, sub } = props;
-  return (
-    <div className={`bibo-card ${focal ? "bibo-card--focal" : "bibo-card--default"} ad-cardpad`}>
-      <div className={`bibo-stat${focal ? " bibo-stat--focal" : ""}`}>
-        <div className="bibo-stat__top">
-          <div className="bibo-stat__icon">{icon}</div>
-          <div className="bibo-stat__label">{label}</div>
-        </div>
-        <div className="bibo-stat__value">{value}</div>
-        <div className="bibo-stat__foot">
-          {sub &&<span className="bibo-stat__sub">{sub}</span>}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export function EmployeeDetail() {
   const { t } = useTranslation("dashboard");
@@ -114,12 +70,25 @@ export function EmployeeDetail() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Resolve the employee's identity from the roster (for the header).
+  // Resolve the employee's identity from the roster (for the header). Not in
+  // the roster = wrong link, or no access to this member in that business.
+  const [notFound, setNotFound] = useState(false);
   useEffect(() => {
+    setEmployee(null);
+    setNotFound(false);
     if (!businessId) return;
+    let current = true;
     reportEmployees(businessId)
-      .then((r) => setEmployee(r.employees.find((e) => e.id === id) ?? null))
+      .then((r) => {
+        if (!current) return;
+        const found = r.employees.find((e) => e.id === id) ?? null;
+        setEmployee(found);
+        setNotFound(!found);
+      })
       .catch(() => {});
+    return () => {
+      current = false;
+    };
   }, [businessId, id]);
 
   // Push the member's name into the app header (replaces the section label);
@@ -283,6 +252,9 @@ export function EmployeeDetail() {
       </div>
 
       {!businessId && <Notice kind="info">{t("detail.noBusinessContext")}</Notice>}
+      {notFound && (
+        <Notice kind="danger">{t("detail.notFound", { member: terms.lowerOne, org: terms.org })}</Notice>
+      )}
       {error && <Notice kind="danger">{error}</Notice>}
 
       {/* summary stat cards */}

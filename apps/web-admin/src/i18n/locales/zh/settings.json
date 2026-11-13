@@ -82,5 +82,60 @@
   },
   "account": {
     "title": "账户"
+  },
+  "admins": {
+    "title": "管理员",
+    "subtitle": "为可信的管理者单独开通 {{name}} 的访问权限。",
+    "thisWorkspace": "此工作区",
+    "add": "添加管理员",
+    "cancel": "取消",
+    "onlyPrimary": "只有主所有者可以添加或移除管理员。你仍可完全访问{{members}}、报告和设置。",
+    "formTitle": "新管理员",
+    "fullName": "全名",
+    "login": "邮箱或用户名",
+    "tempPassword": "临时密码",
+    "create": "创建管理员",
+    "creating": "正在创建…",
+    "loading": "正在加载管理员…",
+    "noWorkspace": "请先创建或选择一个工作区。",
+    "table": {
+      "name": "姓名",
+      "login": "登录名",
+      "access": "权限"
+    },
+    "primary": "主所有者",
+    "admin": "管理员",
+    "remove": "移除",
+    "created": "管理员已创建。请通过安全方式告知登录名和临时密码。",
+    "removed": "已移除管理员权限。",
+    "errorLoad": "无法加载管理员。",
+    "errorCreate": "无法创建管理员。",
+    "errorRemove": "无法移除管理员。",
+    "confirmTitle": "移除管理员？",
+    "confirmBody": "{{name}} 将失去对 {{workspace}} 的访问权限。其账户不会被删除。",
+    "confirmRemove": "移除权限"
+  },
+  "loginHistory": {
+    "title": "登录记录",
+    "subtitle": "{{name}} 最近的成功登录。",
+    "locationNote": "位置为近似值，取决于代理是否提供 IP 地理位置。仅记录成功登录的 IP 地址。",
+    "loading": "正在加载登录记录…",
+    "empty": "暂无登录记录。新的成功登录将显示在这里。",
+    "errorLoad": "无法加载登录记录。",
+    "table": {
+      "user": "用户",
+      "role": "角色",
+      "time": "日期和时间",
+      "ip": "IP 地址",
+      "location": "位置",
+      "device": "设备"
+    },
+    "roleAdmin": "管理员",
+    "locationUnknown": "不可用",
+    "device": {
+      "unknown": "未知设备",
+      "desktop": "桌面应用",
+      "browser": "网页浏览器"
+    }
   }
 }

@@ -4,6 +4,8 @@
   "nav": {
     "dashboard": "Bảng điều khiển",
     "employees": "Nhân viên",
+    "administrators": "Quản trị viên",
+    "loginHistory": "Lịch sử đăng nhập",
     "settings": "Cài đặt"
   },
   "actions": {

@@ -22,7 +22,9 @@
     "vsYesterday": "vs yesterday",
     "ofMembers": "of {{count}} {{members}}",
     "todayLabel": "today",
-    "newTeam": "New team"
+    "newTeam": "New team",
+    "errorBusinesses": "Could not load your workspaces.",
+    "retry": "Retry"
   },
   "employees": {
     "newBusiness": "New business",
@@ -88,6 +90,7 @@
       "screenshots": "Screenshots"
     },
     "singleDay": "Single day",
-    "dateRange": "Date range"
+    "dateRange": "Date range",
+    "notFound": "This {{member}} wasn't found in the selected {{org}}."
   }
 }

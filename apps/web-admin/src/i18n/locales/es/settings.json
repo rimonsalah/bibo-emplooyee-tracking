@@ -83,5 +83,60 @@
   },
   "account": {
     "title": "Cuenta"
+  },
+  "admins": {
+    "title": "Administradores",
+    "subtitle": "Da a gerentes de confianza acceso independiente a {{name}}.",
+    "thisWorkspace": "este espacio de trabajo",
+    "add": "Añadir administrador",
+    "cancel": "Cancelar",
+    "onlyPrimary": "Solo el propietario principal puede añadir o quitar administradores. Sigues teniendo acceso completo a {{members}}, informes y ajustes.",
+    "formTitle": "Nuevo administrador",
+    "fullName": "Nombre completo",
+    "login": "Correo o nombre de usuario",
+    "tempPassword": "Contraseña temporal",
+    "create": "Crear administrador",
+    "creating": "Creando…",
+    "loading": "Cargando administradores…",
+    "noWorkspace": "Primero crea o selecciona un espacio de trabajo.",
+    "table": {
+      "name": "Nombre",
+      "login": "Inicio de sesión",
+      "access": "Acceso"
+    },
+    "primary": "Propietario principal",
+    "admin": "Administrador",
+    "remove": "Quitar",
+    "created": "Administrador creado. Comparte el usuario y la contraseña temporal de forma segura.",
+    "removed": "Acceso de administrador quitado.",
+    "errorLoad": "No se pudieron cargar los administradores.",
+    "errorCreate": "No se pudo crear el administrador.",
+    "errorRemove": "No se pudo quitar el administrador.",
+    "confirmTitle": "¿Quitar administrador?",
+    "confirmBody": "{{name}} perderá el acceso a {{workspace}}. Su cuenta no se elimina.",
+    "confirmRemove": "Quitar acceso"
+  },
+  "loginHistory": {
+    "title": "Historial de inicios de sesión",
+    "subtitle": "Inicios de sesión correctos recientes en {{name}}.",
+    "locationNote": "Las ubicaciones son aproximadas y dependen de que tu proxy proporcione geolocalización por IP. Las direcciones IP solo se registran en inicios de sesión correctos.",
+    "loading": "Cargando historial…",
+    "empty": "Aún no hay registros. Los nuevos inicios de sesión correctos aparecerán aquí.",
+    "errorLoad": "No se pudo cargar el historial de inicios de sesión.",
+    "table": {
+      "user": "Usuario",
+      "role": "Rol",
+      "time": "Fecha y hora",
+      "ip": "Dirección IP",
+      "location": "Ubicación",
+      "device": "Dispositivo"
+    },
+    "roleAdmin": "Administrador",
+    "locationUnknown": "No disponible",
+    "device": {
+      "unknown": "Dispositivo desconocido",
+      "desktop": "App de escritorio",
+      "browser": "Navegador web"
+    }
   }
 }

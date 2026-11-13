@@ -22,7 +22,9 @@
     "vsYesterday": "vs ayer",
     "ofMembers": "de {{count}} {{members}}",
     "todayLabel": "hoy",
-    "newTeam": "Nuevo equipo"
+    "newTeam": "Nuevo equipo",
+    "errorBusinesses": "No se pudieron cargar tus espacios de trabajo.",
+    "retry": "Reintentar"
   },
   "employees": {
     "newBusiness": "Nueva empresa",
@@ -88,6 +90,7 @@
       "screenshots": "Capturas de pantalla"
     },
     "singleDay": "Un día",
-    "dateRange": "Rango de fechas"
+    "dateRange": "Rango de fechas",
+    "notFound": "No se encontró este miembro ({{member}}) en: {{org}}."
   }
 }

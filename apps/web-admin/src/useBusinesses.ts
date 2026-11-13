@@ -44,7 +44,8 @@ function useBusinessStore(): BusinessStore {
         return res.businesses[0]?.id ?? null;
       });
     } catch {
-      setError("Could not load businesses.");
+      // A code, not UI text: AppShell shows the localized message + retry.
+      setError("load_failed");
     } finally {
       setLoading(false);
     }

@@ -4,6 +4,8 @@
   "nav": {
     "dashboard": "Panel",
     "employees": "Empleados",
+    "administrators": "Administradores",
+    "loginHistory": "Historial de inicios de sesión",
     "settings": "Ajustes"
   },
   "actions": {

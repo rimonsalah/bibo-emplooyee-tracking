@@ -82,5 +82,60 @@
   },
   "account": {
     "title": "Tài khoản"
+  },
+  "admins": {
+    "title": "Quản trị viên",
+    "subtitle": "Cấp cho quản lý đáng tin cậy quyền truy cập riêng vào {{name}}.",
+    "thisWorkspace": "không gian làm việc này",
+    "add": "Thêm quản trị viên",
+    "cancel": "Hủy",
+    "onlyPrimary": "Chỉ chủ sở hữu chính mới có thể thêm hoặc xóa quản trị viên. Bạn vẫn có toàn quyền truy cập {{members}}, báo cáo và cài đặt.",
+    "formTitle": "Quản trị viên mới",
+    "fullName": "Họ và tên",
+    "login": "Email hoặc tên đăng nhập",
+    "tempPassword": "Mật khẩu tạm thời",
+    "create": "Tạo quản trị viên",
+    "creating": "Đang tạo…",
+    "loading": "Đang tải quản trị viên…",
+    "noWorkspace": "Hãy tạo hoặc chọn một không gian làm việc trước.",
+    "table": {
+      "name": "Tên",
+      "login": "Đăng nhập",
+      "access": "Quyền"
+    },
+    "primary": "Chủ sở hữu chính",
+    "admin": "Quản trị viên",
+    "remove": "Xóa",
+    "created": "Đã tạo quản trị viên. Hãy chia sẻ thông tin đăng nhập và mật khẩu tạm thời một cách an toàn.",
+    "removed": "Đã xóa quyền quản trị viên.",
+    "errorLoad": "Không thể tải danh sách quản trị viên.",
+    "errorCreate": "Không thể tạo quản trị viên.",
+    "errorRemove": "Không thể xóa quản trị viên.",
+    "confirmTitle": "Xóa quản trị viên?",
+    "confirmBody": "{{name}} sẽ mất quyền truy cập vào {{workspace}}. Tài khoản của họ không bị xóa.",
+    "confirmRemove": "Xóa quyền"
+  },
+  "loginHistory": {
+    "title": "Lịch sử đăng nhập",
+    "subtitle": "Các lần đăng nhập thành công gần đây của {{name}}.",
+    "locationNote": "Vị trí chỉ là ước tính và phụ thuộc vào việc proxy có cung cấp định vị IP hay không. Địa chỉ IP chỉ được ghi lại cho các lần đăng nhập thành công.",
+    "loading": "Đang tải lịch sử đăng nhập…",
+    "empty": "Chưa có bản ghi đăng nhập. Các lần đăng nhập thành công mới sẽ hiển thị ở đây.",
+    "errorLoad": "Không thể tải lịch sử đăng nhập.",
+    "table": {
+      "user": "Người dùng",
+      "role": "Vai trò",
+      "time": "Ngày giờ",
+      "ip": "Địa chỉ IP",
+      "location": "Vị trí",
+      "device": "Thiết bị"
+    },
+    "roleAdmin": "Quản trị viên",
+    "locationUnknown": "Không có",
+    "device": {
+      "unknown": "Thiết bị không xác định",
+      "desktop": "Ứng dụng máy tính",
+      "browser": "Trình duyệt web"
+    }
   }
 }

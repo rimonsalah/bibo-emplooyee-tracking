@@ -4,6 +4,8 @@
   "nav": {
     "dashboard": "ダッシュボード",
     "employees": "従業員",
+    "administrators": "管理者",
+    "loginHistory": "ログイン履歴",
     "settings": "設定"
   },
   "actions": {
