@@ -220,3 +220,4 @@ packaged for the Web Store, and three production releases (1.2.0 → 1.3.0 → 1
 145. Server-side logout: session id (`sid`) in JWTs, `POST /v1/auth/logout`, revoked-session denylist (migration 00012) — **Done (QA pending)**
 146. Screenshot thumbnails (`?size=thumb`, cached JPEG) + lazy-loading gallery + private image caching — **Done (QA pending)**
 147. web-admin: localize Administrators/Login history, admin modals, stale-response guards, business-load error, member not-found, desktop User-Agent, shared member helpers — **Done (QA pending)**
+148. Self-hosted Windows installer: compile-time backend URL + CI workflow (updater pointed at own server) — **Done (first CI run pending)**

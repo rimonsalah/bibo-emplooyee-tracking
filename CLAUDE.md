@@ -77,7 +77,7 @@ dashboard. Open-source, self-hostable, positioned as a Hubstaff alternative.
 
 ## Conventions
 - Tickets: every change is logged in `docs/tickets/NN-*.md` (+ `00-INDEX.md`); QA tickets are
-  interactive (human runs the app). Highest ticket so far: 147.
+  interactive (human runs the app). Highest ticket so far: 148.
 - Verify before claiming done: web/desktop `tsc --noEmit` + `vite build`; backend `go build ./...`;
   Rust `cargo check` (in `apps/desktop/src-tauri`).
 - After backend code changes the `go run` dev server must be **restarted** (no hot reload).

@@ -87,9 +87,16 @@ const DEFAULT_BACKEND_URL: &str = if cfg!(feature = "local") {
     // Private pre-prod host — set via CTRACKING_BACKEND_URL at runtime, or edit locally.
     "https://staging.example.com"
 } else {
-    // production (default)
-    "https://bibotracker.com"
+    // production (default). Self-hosters bake in their own server at build time:
+    //   CTRACKING_DEFAULT_BACKEND_URL=https://track.example.com pnpm tauri build
+    // (see .github/workflows/desktop-windows.yml). Unset → upstream default.
+    match option_env!("CTRACKING_DEFAULT_BACKEND_URL") {
+        Some(url) if !url.is_empty() => url,
+        _ => UPSTREAM_PRODUCTION_URL,
+    }
 };
+
+const UPSTREAM_PRODUCTION_URL: &str = "https://bibotracker.com";
 
 /// Compile-time environment label (matches the backend-URL feature resolution).
 /// Reported to Sentry so events are grouped by deploy environment.
@@ -259,9 +266,13 @@ mod tests {
         // No override env set → falls back to the compile-time env default.
         std::env::remove_var("CTRACKING_BACKEND_URL");
         assert_eq!(backend_base_url(), DEFAULT_BACKEND_URL);
-        // Sanity: the default build targets production.
+        // Sanity: the default build targets production (upstream unless a
+        // self-hosted URL was baked in at compile time).
         if cfg!(all(feature = "production", not(feature = "local"), not(feature = "staging"))) {
-            assert_eq!(backend_base_url(), "https://bibotracker.com");
+            let expected = option_env!("CTRACKING_DEFAULT_BACKEND_URL")
+                .filter(|u| !u.is_empty())
+                .unwrap_or(UPSTREAM_PRODUCTION_URL);
+            assert_eq!(backend_base_url(), expected);
         }
     }
 }
