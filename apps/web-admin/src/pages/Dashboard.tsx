@@ -29,22 +29,6 @@ function memberStatus(lastSeen: number | null): Status {
   return "offline";
 }
 
-/** Deterministic pseudo-random series in [0,1] from a string seed (stable across
- *  renders, no flicker). Used only for PLACEHOLDER sparklines until the backend
- *  exposes real trend data. */
-function seededSeries(seed: string, n = 8): number[] {
-  let h = 2166136261;
-  for (let i = 0; i < seed.length; i++) {
-    h ^= seed.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  const out: number[] = [];
-  for (let i = 0; i < n; i++) {
-    h = Math.imul(h ^ (h >>> 15), 2246822519);
-    out.push(((h >>> 0) % 1000) / 1000);
-  }
-  return out;
-}
 
 const AVATAR_PALETTE = [
   { bg: "var(--info-soft)", fg: "var(--info)" },
@@ -108,7 +92,8 @@ function StatCard(props: {
   focal?: boolean;
   delta?: Delta;
   sub?: string;
-  spark: { data: number[]; color: string };
+  /** Real trend series only — omit until the API provides one. */
+  spark?: { data: number[]; color: string };
 }) {
   const { icon, label, value, focal, delta, sub, spark } = props;
   return (
@@ -127,9 +112,11 @@ function StatCard(props: {
             </span>
           )}
           {sub && <span className="bibo-stat__sub">{sub}</span>}
-          <span style={{ marginLeft: "auto" }}>
-            <Sparkline data={spark.data} color={spark.color} />
-          </span>
+          {spark && (
+            <span style={{ marginLeft: "auto" }}>
+              <Sparkline data={spark.data} color={spark.color} />
+            </span>
+          )}
         </div>
       </div>
     </div>
@@ -166,7 +153,8 @@ export function Dashboard() {
   // ── derived metrics for the stat cards ──
   const totalRecordedS = rows.reduce((s, e) => s + (e.active_today_s || 0), 0);
   const totalYesterdayS = rows.reduce((s, e) => s + (e.active_yesterday_s || 0), 0);
-  const activeCount = rows.filter((e) => memberStatus(e.last_seen) !== "offline").length;
+  // "Active today" = recorded any active time today (not "seen in the last 30 min").
+  const activeCount = rows.filter((e) => (e.active_today_s || 0) > 0).length;
   const focusVals = rows.map((e) => e.focus_pct_today).filter((v): v is number => v != null);
   const avgFocus = focusVals.length
     ? Math.round(focusVals.reduce((a, b) => a + b, 0) / focusVals.length)
@@ -217,21 +205,18 @@ export function Dashboard() {
               value={fmtClock(totalRecordedS)}
               delta={pctDelta(totalRecordedS, totalYesterdayS)}
               sub={totalYesterdayS > 0 ? t("dashboard.vsYesterday") : t("dashboard.todayLabel")}
-              spark={{ data: seededSeries("recorded"), color: "var(--violet)" }}
             />
             <StatCard
               icon={IconUsers}
               label={t("dashboard.statActive")}
               value={`${activeCount} / ${rows.length}`}
               sub={t("dashboard.ofMembers", { count: rows.length, members: terms.many })}
-              spark={{ data: seededSeries("active"), color: "var(--data-sky)" }}
             />
             <StatCard
               icon={IconTarget}
               label={t("dashboard.statFocus")}
               value={avgFocus == null ? "—" : <>{avgFocus}<span className="bibo-stat__unit">%</span></>}
               sub={t("dashboard.todayLabel")}
-              spark={{ data: seededSeries("focus"), color: "var(--positive)" }}
             />
             <StatCard
               icon={IconCamera}
@@ -239,7 +224,6 @@ export function Dashboard() {
               value={screenshotCount}
               delta={countDelta(screenshotCount, screenshotsYday)}
               sub={t("dashboard.todayLabel")}
-              spark={{ data: seededSeries("shots"), color: "var(--data-mint)" }}
             />
           </div>
 
@@ -283,7 +267,7 @@ export function Dashboard() {
                       <td className="r ad-dur">{fmtClock(e.active_today_s)}</td>
                       <td className="r">
                         <span className="ad-rowprod">
-                          <Sparkline data={seededSeries(e.id)} color={col} width={56} height={20} />
+                          <span className="ad-rowprod__dot" style={{ background: col }} aria-hidden />
                           <span className="ad-rowprod__pct">{focus == null ? "—" : `${focus}%`}</span>
                         </span>
                       </td>
